@@ -2,85 +2,301 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BIDV Survey Admin</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>BIDV SmartBanking - Khảo sát trải nghiệm</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: #f2f4f8;
+            font-family: 'Inter', sans-serif;
+        }
+        /* Header giống ảnh thứ hai */
+        .navbar {
+            background: white;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+            padding: 0.75rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .logo {
+            font-weight: 800;
+            font-size: 1.5rem;
+            color: #005391;
+        }
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #1e2a3a;
+        }
+        .auth-buttons button {
+            background: #005391;
+            color: white;
+            border: none;
+            padding: 0.4rem 1rem;
+            border-radius: 2rem;
+            font-weight: 500;
+            margin-left: 0.5rem;
+            cursor: pointer;
+        }
+        .hero {
+            background: linear-gradient(135deg, #005391 0%, #008b8b 100%);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+            border-radius: 0 0 2rem 2rem;
+            margin-bottom: 2rem;
+        }
+        .hero h1 {
+            font-size: 2rem;
+            font-weight: 700;
+        }
+        .survey-card {
+            background: white;
+            border-radius: 1.5rem;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+            padding: 1.8rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid #e9ecef;
+        }
+        .section-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #005391;
+            border-left: 5px solid #00A69C;
+            padding-left: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        /* Likert styles - sửa lỗi chấm to */
+        .likert-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #f8fafc;
+            padding: 0.8rem 1rem;
+            border-radius: 3rem;
+            margin: 0.75rem 0;
+            flex-wrap: wrap;
+            gap: 0.25rem;
+        }
+        .likert-option {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.2rem;
+            cursor: pointer;
+        }
+        .likert-option span {
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: #2c3e50;
+        }
+        .likert-radio {
+            appearance: none;
+            width: 2rem;
+            height: 2rem;
+            border: 2px solid #cbd5e1;
+            border-radius: 50%;
+            background: white;
+            cursor: pointer;
+            transition: all 0.1s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .likert-radio:checked {
+            background-color: #005391;
+            border-color: #005391;
+            box-shadow: 0 0 0 2px white, 0 0 0 4px #005391;
+        }
+        .likert-radio:checked::after {
+            content: '';
+            width: 0.75rem;
+            height: 0.75rem;
+            background: white;
+            border-radius: 50%;
+            display: block;
+        }
+        /* Các input thường */
+        input[type="radio"], input[type="checkbox"] {
+            accent-color: #005391;
+            transform: scale(1.1);
+        }
+        select, textarea {
+            border: 1px solid #cfdfe8;
+            border-radius: 1rem;
+            padding: 0.6rem 1rem;
+            width: 100%;
+            outline: none;
+            transition: 0.2s;
+        }
+        select:focus, textarea:focus {
+            border-color: #005391;
+            box-shadow: 0 0 0 2px rgba(0,83,145,0.2);
+        }
+        .btn-submit {
+            background: linear-gradient(95deg, #005391, #00A69C);
+            border: none;
+            padding: 1rem;
+            font-weight: bold;
+            font-size: 1.1rem;
+            border-radius: 2rem;
+            color: white;
+            width: 100%;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 20px rgba(0,83,145,0.3);
+        }
+        footer {
+            text-align: center;
+            padding: 2rem;
+            font-size: 0.75rem;
+            color: #7f8c8d;
+        }
+        @media (max-width: 640px) {
+            .navbar { flex-direction: column; gap: 0.5rem; text-align: center; }
+            .likert-radio { width: 1.8rem; height: 1.8rem; }
+            .likert-row { padding: 0.5rem; }
+        }
+    </style>
 </head>
-<body class="bg-gray-100 p-6">
-    <div class="max-w-7xl mx-auto">
-        <div class="flex justify-between items-center mb-8">
-            <h1 class="text-3xl font-bold text-[#005391]"> Tổng hợp khảo sát BIDV SmartBanking</h1>
-            <button onclick="exportToExcel()" class="bg-green-600 text-white px-4 py-2 rounded-xl">📎 Xuất Excel</button>
+<body>
+    <!-- Header giống ảnh thứ hai -->
+    <div class="navbar">
+        <div class="logo">🏦 BIDV</div>
+        <div class="nav-links">
+            <span>Cá nhân</span>
+            <span>Doanh nghiệp</span>
+            <span>Khách hàng cao cấp</span>
+            <span>Tin về BIDV</span>
         </div>
-        <div id="statsContainer" class="space-y-6">
-            <div class="text-center py-10"> Đang tải dữ liệu...</div>
+        <div class="auth-buttons">
+            <button>Đăng ký</button>
+            <button>Đăng nhập</button>
         </div>
     </div>
+    <div class="hero">
+        <h1>Khảo sát chất lượng SmartBanking</h1>
+        <p>Góp ý của bạn giúp chúng tôi phục vụ tốt hơn</p>
+    </div>
 
-    <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
+    <div class="max-w-3xl mx-auto px-4">
+        <form id="surveyForm">
+            <!-- Phần A -->
+            <div class="survey-card">
+                <div class="section-title">A. Thông tin cá nhân</div>
+                <div class="grid md:grid-cols-2 gap-5">
+                    <div><label class="font-semibold">Giới tính *</label><div class="flex gap-4 mt-1"><label><input type="radio" name="gender" value="Nam"> Nam</label><label><input type="radio" name="gender" value="Nữ"> Nữ</label></div></div>
+                    <div><label class="font-semibold">Độ tuổi *</label><select name="age"><option value="">Chọn</option><option>Dưới 18</option><option>18-25</option><option>26-35</option><option>36-45</option><option>Trên 45</option></select></div>
+                    <div><label class="font-semibold">Nghề nghiệp *</label><select name="job"><option value="">Chọn</option><option>Học sinh/SV</option><option>Nhân viên văn phòng</option><option>Công chức</option><option>Kinh doanh tự do</option><option>Nội trợ</option><option>Đã nghỉ hưu</option><option>Khác</option></select></div>
+                    <div><label class="font-semibold">Thu nhập tháng</label><select name="income"><option>Dưới 5tr</option><option>5-10tr</option><option>10-20tr</option><option>Trên 20tr</option></select></div>
+                </div>
+            </div>
+            <!-- Phần B -->
+            <div class="survey-card">
+                <div class="section-title">B. Thói quen sử dụng</div>
+                <div class="space-y-4">
+                    <div><label class="font-semibold">Thời gian sử dụng *</label><div class="grid grid-cols-2 gap-2 mt-2"><label class="border p-2 rounded-xl text-center"><input type="radio" name="duration" value="<6 tháng"> <6 tháng</label><label class="border p-2 rounded-xl text-center"><input type="radio" name="duration" value="6-12 tháng"> 6-12 tháng</label><label class="border p-2 rounded-xl text-center"><input type="radio" name="duration" value="1-3 năm"> 1-3 năm</label><label class="border p-2 rounded-xl text-center"><input type="radio" name="duration" value=">3 năm"> >3 năm</label></div></div>
+                    <div><label class="font-semibold">Tần suất sử dụng</label><div class="flex flex-wrap gap-3"><label><input type="radio" name="frequency" value="Hàng ngày"> Hàng ngày</label><label><input type="radio" name="frequency" value="2-3 lần/tuần"> 2-3 lần/tuần</label><label><input type="radio" name="frequency" value="1 lần/tuần"> 1 lần/tuần</label><label><input type="radio" name="frequency" value="Ít hơn"> Ít hơn</label></div></div>
+                    <div><label class="font-semibold">Tính năng thường dùng (nhiều)</label><div class="grid grid-cols-2 gap-2"><label><input type="checkbox" name="features" value="Chuyển tiền"> Chuyển tiền</label><label><input type="checkbox" name="features" value="Thanh toán hóa đơn"> Thanh toán hóa đơn</label><label><input type="checkbox" name="features" value="Tiết kiệm online"> Tiết kiệm online</label><label><input type="checkbox" name="features" value="QR Pay"> QR Pay</label><label><input type="checkbox" name="features" value="Vay tiêu dùng"> Vay tiêu dùng</label><label><input type="checkbox" name="features" value="Mở thẻ"> Mở thẻ trực tuyến</label></div></div>
+                </div>
+            </div>
+            <!-- Phần C: Likert đã sửa - mỗi câu chỉ 5 nút -->
+            <div class="survey-card">
+                <div class="section-title">C. Đánh giá chất lượng (1=Rất không đồng ý → 5=Rất đồng ý)</div>
+                <div class="space-y-4">
+                    <!-- TC1 -->
+                    <div><p class="font-medium mb-1">TC1: Hệ thống hoạt động ổn định, ít khi bị gián đoạn.</p><div class="likert-row" id="tc1-row"></div></div>
+                    <div><p class="font-medium mb-1">TC2: Giao dịch được xử lý chính xác, không sai sót.</p><div class="likert-row" id="tc2-row"></div></div>
+                    <div><p class="font-medium mb-1">TC3: Thời gian phản hồi giao dịch nhanh chóng.</p><div class="likert-row" id="tc3-row"></div></div>
+                    <div><p class="font-medium mb-1">Đáp ứng 1: BIDV giải quyết nhanh khi tôi gặp sự cố.</p><div class="likert-row" id="dapung1-row"></div></div>
+                    <div><p class="font-medium mb-1">Đáp ứng 2: Tổng đài hỗ trợ 24/7 hiệu quả.</p><div class="likert-row" id="dapung2-row"></div></div>
+                    <div><p class="font-medium mb-1">Bảo mật 1: Tôi tin tưởng vào các lớp bảo mật (OTP, sinh trắc học).</p><div class="likert-row" id="bm1-row"></div></div>
+                    <div><p class="font-medium mb-1">Bảo mật 2: Thông tin cá nhân được bảo vệ an toàn.</p><div class="likert-row" id="bm2-row"></div></div>
+                    <div><p class="font-medium mb-1">Dễ dùng 1: Giao diện thân thiện, dễ thao tác.</p><div class="likert-row" id="deDung1-row"></div></div>
+                    <div><p class="font-medium mb-1">Dễ dùng 2: Các tính năng được bố trí hợp lý, dễ tìm.</p><div class="likert-row" id="deDung2-row"></div></div>
+                    <div><p class="font-medium mb-1">Hữu hình 1: Giao diện hiện đại, màu sắc chuyên nghiệp.</p><div class="likert-row" id="ht1-row"></div></div>
+                    <div><p class="font-medium mb-1">Hữu hình 2: Ứng dụng có nhiều tính năng hữu ích.</p><div class="likert-row" id="ht2-row"></div></div>
+                    <div><p class="font-medium mb-1">Hài lòng chung: Nhìn chung tôi hài lòng với BIDV SmartBanking.</p><div class="likert-row" id="haiLong-row"></div></div>
+                </div>
+            </div>
+            <!-- Phần D -->
+            <div class="survey-card">
+                <div class="section-title">D. Phản hồi & đề xuất</div>
+                <div><label class="font-semibold">Khó khăn gặp phải (chọn nhiều):</label><div class="grid grid-cols-2 gap-2 mt-2"><label><input type="checkbox" name="difficulties" value="Bảo trì thường xuyên"> Bảo trì thường xuyên</label><label><input type="checkbox" name="difficulties" value="Lỗi đăng nhập"> Lỗi đăng nhập</label><label><input type="checkbox" name="difficulties" value="Chậm xử lý"> Chậm xử lý</label><label><input type="checkbox" name="difficulties" value="Phí cao"> Phí cao</label><label><input type="checkbox" name="difficulties" value="Cài đặt phức tạp"> Cài đặt phức tạp</label><label><input type="checkbox" name="difficulties" value="eKYC lỗi"> eKYC lỗi</label></div></div>
+                <div class="mt-5"><label class="font-semibold">Góp ý cải thiện:</label><textarea name="feedback" rows="3" placeholder="Chia sẻ ý kiến của bạn..."></textarea></div>
+            </div>
+            <button type="submit" class="btn-submit"> GỬI KHẢO SÁT</button>
+        </form>
+        <footer>© Nghiên cứu Fintech – BIDV SmartBanking | Mọi thông tin được bảo mật</footer>
+    </div>
+
     <script>
-        const PASSWORD = "14092004";
-        const pwd = prompt("Nhập mật khẩu quản trị:");
-        if(pwd !== PASSWORD) { document.body.innerHTML = '<div class="text-center text-red-600 p-10"> Truy cập bị từ chối</div>'; throw new Error("Unauth"); }
+        // Tạo các hàng Likert động với 5 nút
+        const likertFields = ['tc1','tc2','tc3','dapung1','dapung2','bm1','bm2','deDung1','deDung2','ht1','ht2','haiLong'];
+        likertFields.forEach(field => {
+            const container = document.getElementById(`${field}-row`);
+            if(container) {
+                for(let i=1; i<=5; i++) {
+                    const label = document.createElement('label');
+                    label.className = 'likert-option';
+                    const span = document.createElement('span');
+                    span.textContent = i;
+                    const radio = document.createElement('input');
+                    radio.type = 'radio';
+                    radio.name = field;
+                    radio.value = i;
+                    radio.className = 'likert-radio';
+                    label.appendChild(span);
+                    label.appendChild(radio);
+                    container.appendChild(label);
+                }
+            }
+        });
 
-        async function fetchStats() {
-            const response = await fetch('/api/admin/stats');
-            if (!response.ok) throw new Error(`HTTP ${response.status}`);
-            return response.json();
-        }
-
-        function renderStats(data) {
-            const { total, genderCount, ageGroups, jobCount, durationCount, likertAvg, featureFreq, difficultyFreq, rawResponses } = data;
-            let html = `
-                <div class="grid md:grid-cols-4 gap-4">
-                    <div class="bg-white p-4 rounded-2xl shadow"><div class="text-4xl font-bold text-[#005391]">${total}</div><div>Tổng phản hồi</div></div>
-                    <div class="bg-white p-4 rounded-2xl shadow"><div class="font-bold">Giới tính</div><div>Nam: ${genderCount.Nam||0}</div><div>Nữ: ${genderCount.Nữ||0}</div></div>
-                    <div class="bg-white p-4 rounded-2xl shadow"><div class="font-bold">Độ tuổi</div>${Object.entries(ageGroups).map(([k,v])=>`<div>${k}: ${v}</div>`).join('')||'Chưa có'}</div>
-                    <div class="bg-white p-4 rounded-2xl shadow"><div class="font-bold">Thời gian dùng</div>${Object.entries(durationCount).map(([k,v])=>`<div>${k}: ${v}</div>`).join('')}</div>
-                </div>
-                <div class="bg-white p-4 rounded-2xl shadow">
-                    <h2 class="font-bold text-lg mb-3"> Điểm trung bình (1-5)</h2>
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-                        <div>TC1: ${likertAvg.tc1}</div><div>TC2: ${likertAvg.tc2}</div><div>TC3: ${likertAvg.tc3}</div>
-                        <div>Đáp ứng1: ${likertAvg.dapung1}</div><div>Đáp ứng2: ${likertAvg.dapung2}</div>
-                        <div>Bảo mật1: ${likertAvg.bm1}</div><div>Bảo mật2: ${likertAvg.bm2}</div>
-                        <div>Dễ dùng1: ${likertAvg.deDung1}</div><div>Dễ dùng2: ${likertAvg.deDung2}</div>
-                        <div>Hữu hình1: ${likertAvg.ht1}</div><div>Hữu hình2: ${likertAvg.ht2}</div>
-                        <div class="font-bold text-[#00A69C]">Hài lòng: ${likertAvg.haiLong}</div>
-                    </div>
-                </div>
-                <div class="grid md:grid-cols-2 gap-6">
-                    <div class="bg-white p-4 rounded-2xl shadow"><h2 class="font-bold"> Tính năng dùng nhiều</h2><ul>${Object.entries(featureFreq).map(([k,v])=>`<li>${k}: ${v}</li>`).join('')||'Chưa có'}</ul></div>
-                    <div class="bg-white p-4 rounded-2xl shadow"><h2 class="font-bold"> Khó khăn thường gặp</h2><ul>${Object.entries(difficultyFreq).map(([k,v])=>`<li>${k}: ${v}</li>`).join('')||'Chưa có'}</ul></div>
-                </div>
-                <div class="bg-white p-4 rounded-2xl shadow overflow-auto">
-                    <h2 class="font-bold text-lg mb-3">📋 100 phản hồi gần nhất</h2>
-                    <table class="w-full text-sm border"><thead class="bg-gray-100"><tr><th>Thời gian</th><th>GT</th><th>Tuổi</th><th>Đánh giá TB</th><th>Góp ý</th></tr></thead><tbody>
-                        ${rawResponses.map(r => `<tr class="border-b"><td>${new Date(r.submittedAt).toLocaleString()}</td><td>${r.gender}</td><td>${r.age}</td><td>${((r.tc1+r.tc2+r.tc3+r.dapung1+r.dapung2+r.bm1+r.bm2+r.deDung1+r.deDung2+r.ht1+r.ht2+r.haiLong)/12).toFixed(1)}</td><td>${(r.feedback || '').substring(0,60)}</td></tr>`).join('')}
-                    </tbody></table>
-                </div>`;
-            document.getElementById('statsContainer').innerHTML = html;
-        }
-
-        function exportToExcel() {
-            fetchStats().then(data => {
-                const wsData = data.rawResponses.map(r => ({
-                    'Thời gian': r.submittedAt, 'Giới tính': r.gender, 'Tuổi': r.age, 'Nghề nghiệp': r.job,
-                    'TC1': r.tc1, 'TC2': r.tc2, 'TC3': r.tc3, 'Đáp ứng1': r.dapung1, 'Đáp ứng2': r.dapung2,
-                    'Bảo mật1': r.bm1, 'Bảo mật2': r.bm2, 'Dễ dùng1': r.deDung1, 'Dễ dùng2': r.deDung2,
-                    'Hữu hình1': r.ht1, 'Hữu hình2': r.ht2, 'Hài lòng': r.haiLong,
-                    'Khó khăn': (r.difficulties||[]).join(', '), 'Góp ý': r.feedback
-                }));
-                const ws = XLSX.utils.json_to_sheet(wsData);
-                const wb = XLSX.utils.book_new();
-                XLSX.utils.book_append_sheet(wb, ws, 'PhanHoi');
-                XLSX.writeFile(wb, `BIDV_Survey_${new Date().toISOString().slice(0,19)}.xlsx`);
-            }).catch(err=>alert("Lỗi xuất Excel: "+err.message));
-        }
-
-        fetchStats().then(renderStats).catch(err => {
-            document.getElementById('statsContainer').innerHTML = `<div class="bg-red-100 text-red-700 p-4 rounded-2xl">❌ Lỗi tải dữ liệu: ${err.message}</div>`;
+        const form = document.getElementById('surveyForm');
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const gender = document.querySelector('input[name="gender"]:checked')?.value;
+            const age = document.querySelector('select[name="age"]').value;
+            const job = document.querySelector('select[name="job"]').value;
+            const income = document.querySelector('select[name="income"]').value;
+            const duration = document.querySelector('input[name="duration"]:checked')?.value;
+            const frequency = document.querySelector('input[name="frequency"]:checked')?.value;
+            const features = Array.from(document.querySelectorAll('input[name="features"]:checked')).map(cb=>cb.value);
+            const difficulties = Array.from(document.querySelectorAll('input[name="difficulties"]:checked')).map(cb=>cb.value);
+            const feedback = document.querySelector('textarea[name="feedback"]').value;
+            const likertValues = {};
+            let missing = false;
+            likertFields.forEach(f => {
+                const val = document.querySelector(`input[name="${f}"]:checked`)?.value;
+                if(!val) missing = true;
+                likertValues[f] = val ? parseInt(val) : null;
+            });
+            if(!gender || !age || !job || !duration || missing) {
+                alert("Vui lòng hoàn thành tất cả câu hỏi bắt buộc (*) và đánh giá đủ 12 tiêu chí!");
+                return;
+            }
+            const payload = { gender, age, job, income, duration, frequency, features, difficulties, feedback, ...likertValues, submittedAt: new Date().toISOString() };
+            try {
+                const res = await fetch('/api/submit', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload) });
+                const result = await res.json();
+                if(result.success) alert(" Cảm ơn bạn! Khảo sát đã được ghi nhận.");
+                else alert(" Lỗi: " + (result.message||"Thử lại sau"));
+                if(result.success) form.reset();
+            } catch(err) { alert("Lỗi kết nối máy chủ. Vui lòng thử lại."); }
         });
     </script>
 </body>
