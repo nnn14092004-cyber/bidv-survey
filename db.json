@@ -1,0 +1,37 @@
+{
+  "responses": [
+    {
+      "gender": "Nam",
+      "age": "18-25",
+      "job": "Học sinh/SV",
+      "income": "5-10 triệu",
+      "duration": "<6 tháng",
+      "frequency": "1 lần/tuần",
+      "features": [
+        "Thanh toán hóa đơn",
+        "QR Pay",
+        "Mở thẻ"
+      ],
+      "difficulties": [
+        "Bảo trì thường xuyên",
+        "Chậm xử lý giao dịch",
+        "Khó khăn khi cài đặt"
+      ],
+      "feedback": "Hay",
+      "tc1": 5,
+      "tc2": 5,
+      "tc3": 4,
+      "dapung1": 5,
+      "dapung2": 5,
+      "bm1": 5,
+      "bm2": 5,
+      "deDung1": 5,
+      "deDung2": 5,
+      "ht1": 4,
+      "ht2": 4,
+      "haiLong": 4,
+      "submittedAt": "2026-04-03T16:26:19.229Z",
+      "id": 1775233579229
+    }
+  ]
+}
