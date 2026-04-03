@@ -7,13 +7,83 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
     <style>
-        body { background: linear-gradient(135deg, #eef2f7 0%, #d9e2ec 100%); font-family: 'Inter', sans-serif; }
-        .survey-card { background: rgba(255,255,255,0.92); backdrop-filter: blur(4px); border-radius: 2rem; box-shadow: 0 20px 35px -12px rgba(0,0,0,0.1); transition: all 0.2s; }
-        .likert-row { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem; background: #f9fafb; padding: 0.75rem; border-radius: 1.5rem; }
-        .likert-radio { appearance: none; width: 2rem; height: 2rem; border: 2px solid #cbd5e1; border-radius: 9999px; cursor: pointer; transition: 0.1s; }
-        .likert-radio:checked { background-color: #005391; border-color: #005391; box-shadow: 0 0 0 2px white, 0 0 0 4px #005391; }
-        .btn-submit { background: linear-gradient(95deg, #005391, #00A69C); transition: 0.2s; }
-        .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 10px 20px -5px #00539180; }
+        body {
+            background: linear-gradient(135deg, #f0f4fa 0%, #dae5f0 100%);
+            font-family: 'Inter', sans-serif;
+        }
+        .likert-group {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: white;
+            padding: 0.5rem 1rem;
+            border-radius: 2rem;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+            flex-wrap: wrap;
+            gap: 0.25rem;
+        }
+        .likert-option {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+        }
+        .likert-option span:first-child {
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: #6c757d;
+        }
+        .likert-radio {
+            appearance: none;
+            width: 2rem;
+            height: 2rem;
+            border: 2px solid #cbd5e1;
+            border-radius: 9999px;
+            cursor: pointer;
+            transition: 0.1s;
+            background-color: white;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .likert-radio:checked {
+            background-color: #005391;
+            border-color: #005391;
+            box-shadow: 0 0 0 2px white, 0 0 0 4px #005391;
+        }
+        .likert-radio:checked::after {
+            content: '';
+            width: 0.75rem;
+            height: 0.75rem;
+            background: white;
+            border-radius: 50%;
+            display: block;
+        }
+        .survey-card {
+            background: rgba(255,255,255,0.92);
+            backdrop-filter: blur(4px);
+            border-radius: 2rem;
+            box-shadow: 0 12px 30px rgba(0,83,145,0.1);
+            border: 1px solid rgba(0,83,145,0.1);
+        }
+        .btn-submit {
+            background: linear-gradient(95deg, #005391, #00A69C);
+            transition: 0.2s;
+        }
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 25px -8px #00539180;
+        }
+        .section-title {
+            color: #005391;
+            border-left: 5px solid #00A69C;
+            padding-left: 1rem;
+        }
+        input[type="radio"], input[type="checkbox"] {
+            accent-color: #005391;
+            transform: scale(1.1);
+        }
     </style>
 </head>
 <body class="py-10 px-4">
@@ -24,20 +94,20 @@
         </div>
 
         <form id="surveyForm" class="space-y-6">
-            <!-- ========= PHẦN A: NHÂN KHẨU ========= -->
+            <!-- Phần A -->
             <div class="survey-card p-6">
-                <h2 class="text-xl font-bold text-[#005391] border-l-4 border-[#00A69C] pl-3 mb-4">A. Thông tin cá nhân</h2>
+                <h2 class="text-xl font-bold section-title mb-4">A. Thông tin cá nhân</h2>
                 <div class="grid md:grid-cols-2 gap-5">
                     <div><label class="font-semibold">Giới tính *</label><div class="flex gap-4 mt-1"><label><input type="radio" name="gender" value="Nam"> Nam</label><label><input type="radio" name="gender" value="Nữ"> Nữ</label></div></div>
-                    <div><label class="font-semibold">Độ tuổi *</label><select name="age" class="w-full p-2 border rounded-xl"><option value="">Chọn</option><option>Dưới 18</option><option>18-25</option><option>26-35</option><option>36-45</option><option>Trên 45</option></select></div>
-                    <div><label class="font-semibold">Nghề nghiệp *</label><select name="job" class="w-full p-2 border rounded-xl"><option value="">Chọn</option><option>Học sinh/SV</option><option>Nhân viên văn phòng</option><option>Công chức</option><option>Kinh doanh tự do</option><option>Nội trợ</option><option>Đã nghỉ hưu</option><option>Khác</option></select></div>
-                    <div><label class="font-semibold">Thu nhập hàng tháng</label><select name="income" class="w-full p-2 border rounded-xl"><option>Dưới 5 triệu</option><option>5-10 triệu</option><option>10-20 triệu</option><option>Trên 20 triệu</option></select></div>
+                    <div><label class="font-semibold">Độ tuổi *</label><select name="age" class="w-full p-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#005391]"><option value="">Chọn</option><option>Dưới 18</option><option>18-25</option><option>26-35</option><option>36-45</option><option>Trên 45</option></select></div>
+                    <div><label class="font-semibold">Nghề nghiệp *</label><select name="job" class="w-full p-2 border border-gray-300 rounded-xl"><option value="">Chọn</option><option>Học sinh/SV</option><option>Nhân viên văn phòng</option><option>Công chức</option><option>Kinh doanh tự do</option><option>Nội trợ</option><option>Đã nghỉ hưu</option><option>Khác</option></select></div>
+                    <div><label class="font-semibold">Thu nhập hàng tháng</label><select name="income" class="w-full p-2 border border-gray-300 rounded-xl"><option>Dưới 5 triệu</option><option>5-10 triệu</option><option>10-20 triệu</option><option>Trên 20 triệu</option></select></div>
                 </div>
             </div>
 
-            <!-- ========= PHẦN B: HÀNH VI ========= -->
+            <!-- Phần B -->
             <div class="survey-card p-6">
-                <h2 class="text-xl font-bold text-[#005391] border-l-4 border-[#00A69C] pl-3 mb-4">B. Thói quen sử dụng</h2>
+                <h2 class="text-xl font-bold section-title mb-4">B. Thói quen sử dụng</h2>
                 <div class="space-y-4">
                     <div><label class="font-semibold">Thời gian sử dụng BIDV SmartBanking? *</label><div class="grid grid-cols-2 gap-2 mt-2"><label class="border p-2 rounded-xl text-center"><input type="radio" name="duration" value="<6 tháng"> <6 tháng</label><label class="border p-2 rounded-xl text-center"><input type="radio" name="duration" value="6-12 tháng"> 6-12 tháng</label><label class="border p-2 rounded-xl text-center"><input type="radio" name="duration" value="1-3 năm"> 1-3 năm</label><label class="border p-2 rounded-xl text-center"><input type="radio" name="duration" value=">3 năm"> >3 năm</label></div></div>
                     <div><label class="font-semibold">Tần suất sử dụng?</label><div class="flex flex-wrap gap-3"><label><input type="radio" name="frequency" value="Hàng ngày"> Hàng ngày</label><label><input type="radio" name="frequency" value="2-3 lần/tuần"> 2-3 lần/tuần</label><label><input type="radio" name="frequency" value="1 lần/tuần"> 1 lần/tuần</label><label><input type="radio" name="frequency" value="Ít hơn"> Ít hơn</label></div></div>
@@ -45,30 +115,31 @@
                 </div>
             </div>
 
-            <!-- ========= PHẦN C: CHẤT LƯỢNG DỊCH VỤ (12 câu Likert) ========= -->
+            <!-- Phần C: Likert với style mới -->
             <div class="survey-card p-6">
-                <h2 class="text-xl font-bold text-[#005391] border-l-4 border-[#00A69C] pl-3 mb-4">C. Đánh giá chất lượng (1=Rất không đồng ý → 5=Rất đồng ý)</h2>
+                <h2 class="text-xl font-bold section-title mb-4">C. Đánh giá chất lượng (1=Rất không đồng ý → 5=Rất đồng ý)</h2>
                 <div class="space-y-5">
-                    <div><p class="font-medium">TC1: Hệ thống hoạt động ổn định, ít khi bị gián đoạn.</p><div class="likert-row"><span>1</span><input type="radio" name="tc1" value="1" class="likert-radio"><input type="radio" name="tc1" value="2" class="likert-radio"><input type="radio" name="tc1" value="3" class="likert-radio"><input type="radio" name="tc1" value="4" class="likert-radio"><input type="radio" name="tc1" value="5" class="likert-radio"><span>5</span></div></div>
-                    <div><p class="font-medium">TC2: Giao dịch được xử lý chính xác, không sai sót.</p><div class="likert-row"><span>1</span><input type="radio" name="tc2" value="1"><input type="radio" name="tc2" value="2"><input type="radio" name="tc2" value="3"><input type="radio" name="tc2" value="4"><input type="radio" name="tc2" value="5"><span>5</span></div></div>
-                    <div><p class="font-medium">TC3: Thời gian phản hồi giao dịch nhanh chóng.</p><div class="likert-row"><span>1</span><input type="radio" name="tc3" value="1"><input type="radio" name="tc3" value="2"><input type="radio" name="tc3" value="3"><input type="radio" name="tc3" value="4"><input type="radio" name="tc3" value="5"><span>5</span></div></div>
-                    <div><p class="font-medium">Đáp ứng 1: BIDV giải quyết nhanh khi tôi gặp sự cố.</p><div class="likert-row"><span>1</span><input type="radio" name="dapung1" value="1"><input type="radio" name="dapung1" value="2"><input type="radio" name="dapung1" value="3"><input type="radio" name="dapung1" value="4"><input type="radio" name="dapung1" value="5"><span>5</span></div></div>
-                    <div><p class="font-medium">Đáp ứng 2: Tổng đài hỗ trợ 24/7 hiệu quả.</p><div class="likert-row"><span>1</span><input type="radio" name="dapung2" value="1"><input type="radio" name="dapung2" value="2"><input type="radio" name="dapung2" value="3"><input type="radio" name="dapung2" value="4"><input type="radio" name="dapung2" value="5"><span>5</span></div></div>
-                    <div><p class="font-medium">Bảo mật 1: Tôi tin tưởng vào các lớp bảo mật (OTP, sinh trắc học).</p><div class="likert-row"><span>1</span><input type="radio" name="bm1" value="1"><input type="radio" name="bm1" value="2"><input type="radio" name="bm1" value="3"><input type="radio" name="bm1" value="4"><input type="radio" name="bm1" value="5"><span>5</span></div></div>
-                    <div><p class="font-medium">Bảo mật 2: Thông tin cá nhân được bảo vệ an toàn.</p><div class="likert-row"><span>1</span><input type="radio" name="bm2" value="1"><input type="radio" name="bm2" value="2"><input type="radio" name="bm2" value="3"><input type="radio" name="bm2" value="4"><input type="radio" name="bm2" value="5"><span>5</span></div></div>
-                    <div><p class="font-medium">Dễ dùng 1: Giao diện thân thiện, dễ thao tác.</p><div class="likert-row"><span>1</span><input type="radio" name="deDung1" value="1"><input type="radio" name="deDung1" value="2"><input type="radio" name="deDung1" value="3"><input type="radio" name="deDung1" value="4"><input type="radio" name="deDung1" value="5"><span>5</span></div></div>
-                    <div><p class="font-medium">Dễ dùng 2: Các tính năng được bố trí hợp lý, dễ tìm.</p><div class="likert-row"><span>1</span><input type="radio" name="deDung2" value="1"><input type="radio" name="deDung2" value="2"><input type="radio" name="deDung2" value="3"><input type="radio" name="deDung2" value="4"><input type="radio" name="deDung2" value="5"><span>5</span></div></div>
-                    <div><p class="font-medium">Hữu hình 1: Giao diện hiện đại, màu sắc chuyên nghiệp.</p><div class="likert-row"><span>1</span><input type="radio" name="ht1" value="1"><input type="radio" name="ht1" value="2"><input type="radio" name="ht1" value="3"><input type="radio" name="ht1" value="4"><input type="radio" name="ht1" value="5"><span>5</span></div></div>
-                    <div><p class="font-medium">Hữu hình 2: Ứng dụng có nhiều tính năng hữu ích.</p><div class="likert-row"><span>1</span><input type="radio" name="ht2" value="1"><input type="radio" name="ht2" value="2"><input type="radio" name="ht2" value="3"><input type="radio" name="ht2" value="4"><input type="radio" name="ht2" value="5"><span>5</span></div></div>
-                    <div><p class="font-medium">Hài lòng chung: Nhìn chung tôi hài lòng với BIDV SmartBanking.</p><div class="likert-row"><span>1</span><input type="radio" name="haiLong" value="1"><input type="radio" name="haiLong" value="2"><input type="radio" name="haiLong" value="3"><input type="radio" name="haiLong" value="4"><input type="radio" name="haiLong" value="5"><span>5</span></div></div>
+                    <!-- Sử dụng vòng lặp tay để tránh lỗi template string -->
+                    <div><p class="font-medium">TC1: Hệ thống hoạt động ổn định, ít khi bị gián đoạn.</p><div class="likert-group"><label class="likert-option"><span>1</span><input type="radio" name="tc1" value="1" class="likert-radio"></label><label class="likert-option"><span>2</span><input type="radio" name="tc1" value="2" class="likert-radio"></label><label class="likert-option"><span>3</span><input type="radio" name="tc1" value="3" class="likert-radio"></label><label class="likert-option"><span>4</span><input type="radio" name="tc1" value="4" class="likert-radio"></label><label class="likert-option"><span>5</span><input type="radio" name="tc1" value="5" class="likert-radio"></label></div></div>
+                    <div><p class="font-medium">TC2: Giao dịch được xử lý chính xác, không sai sót.</p><div class="likert-group"><label class="likert-option"><span>1</span><input type="radio" name="tc2" value="1" class="likert-radio"></label><label class="likert-option"><span>2</span><input type="radio" name="tc2" value="2" class="likert-radio"></label><label class="likert-option"><span>3</span><input type="radio" name="tc2" value="3" class="likert-radio"></label><label class="likert-option"><span>4</span><input type="radio" name="tc2" value="4" class="likert-radio"></label><label class="likert-option"><span>5</span><input type="radio" name="tc2" value="5" class="likert-radio"></label></div></div>
+                    <div><p class="font-medium">TC3: Thời gian phản hồi giao dịch nhanh chóng.</p><div class="likert-group"><label class="likert-option"><span>1</span><input type="radio" name="tc3" value="1" class="likert-radio"></label><label class="likert-option"><span>2</span><input type="radio" name="tc3" value="2" class="likert-radio"></label><label class="likert-option"><span>3</span><input type="radio" name="tc3" value="3" class="likert-radio"></label><label class="likert-option"><span>4</span><input type="radio" name="tc3" value="4" class="likert-radio"></label><label class="likert-option"><span>5</span><input type="radio" name="tc3" value="5" class="likert-radio"></label></div></div>
+                    <div><p class="font-medium">Đáp ứng 1: BIDV giải quyết nhanh khi tôi gặp sự cố.</p><div class="likert-group"><label class="likert-option"><span>1</span><input type="radio" name="dapung1" value="1" class="likert-radio"></label><label class="likert-option"><span>2</span><input type="radio" name="dapung1" value="2" class="likert-radio"></label><label class="likert-option"><span>3</span><input type="radio" name="dapung1" value="3" class="likert-radio"></label><label class="likert-option"><span>4</span><input type="radio" name="dapung1" value="4" class="likert-radio"></label><label class="likert-option"><span>5</span><input type="radio" name="dapung1" value="5" class="likert-radio"></label></div></div>
+                    <div><p class="font-medium">Đáp ứng 2: Tổng đài hỗ trợ 24/7 hiệu quả.</p><div class="likert-group"><label class="likert-option"><span>1</span><input type="radio" name="dapung2" value="1" class="likert-radio"></label><label class="likert-option"><span>2</span><input type="radio" name="dapung2" value="2" class="likert-radio"></label><label class="likert-option"><span>3</span><input type="radio" name="dapung2" value="3" class="likert-radio"></label><label class="likert-option"><span>4</span><input type="radio" name="dapung2" value="4" class="likert-radio"></label><label class="likert-option"><span>5</span><input type="radio" name="dapung2" value="5" class="likert-radio"></label></div></div>
+                    <div><p class="font-medium">Bảo mật 1: Tôi tin tưởng vào các lớp bảo mật (OTP, sinh trắc học).</p><div class="likert-group"><label class="likert-option"><span>1</span><input type="radio" name="bm1" value="1" class="likert-radio"></label><label class="likert-option"><span>2</span><input type="radio" name="bm1" value="2" class="likert-radio"></label><label class="likert-option"><span>3</span><input type="radio" name="bm1" value="3" class="likert-radio"></label><label class="likert-option"><span>4</span><input type="radio" name="bm1" value="4" class="likert-radio"></label><label class="likert-option"><span>5</span><input type="radio" name="bm1" value="5" class="likert-radio"></label></div></div>
+                    <div><p class="font-medium">Bảo mật 2: Thông tin cá nhân được bảo vệ an toàn.</p><div class="likert-group"><label class="likert-option"><span>1</span><input type="radio" name="bm2" value="1" class="likert-radio"></label><label class="likert-option"><span>2</span><input type="radio" name="bm2" value="2" class="likert-radio"></label><label class="likert-option"><span>3</span><input type="radio" name="bm2" value="3" class="likert-radio"></label><label class="likert-option"><span>4</span><input type="radio" name="bm2" value="4" class="likert-radio"></label><label class="likert-option"><span>5</span><input type="radio" name="bm2" value="5" class="likert-radio"></label></div></div>
+                    <div><p class="font-medium">Dễ dùng 1: Giao diện thân thiện, dễ thao tác.</p><div class="likert-group"><label class="likert-option"><span>1</span><input type="radio" name="deDung1" value="1" class="likert-radio"></label><label class="likert-option"><span>2</span><input type="radio" name="deDung1" value="2" class="likert-radio"></label><label class="likert-option"><span>3</span><input type="radio" name="deDung1" value="3" class="likert-radio"></label><label class="likert-option"><span>4</span><input type="radio" name="deDung1" value="4" class="likert-radio"></label><label class="likert-option"><span>5</span><input type="radio" name="deDung1" value="5" class="likert-radio"></label></div></div>
+                    <div><p class="font-medium">Dễ dùng 2: Các tính năng được bố trí hợp lý, dễ tìm.</p><div class="likert-group"><label class="likert-option"><span>1</span><input type="radio" name="deDung2" value="1" class="likert-radio"></label><label class="likert-option"><span>2</span><input type="radio" name="deDung2" value="2" class="likert-radio"></label><label class="likert-option"><span>3</span><input type="radio" name="deDung2" value="3" class="likert-radio"></label><label class="likert-option"><span>4</span><input type="radio" name="deDung2" value="4" class="likert-radio"></label><label class="likert-option"><span>5</span><input type="radio" name="deDung2" value="5" class="likert-radio"></label></div></div>
+                    <div><p class="font-medium">Hữu hình 1: Giao diện hiện đại, màu sắc chuyên nghiệp.</p><div class="likert-group"><label class="likert-option"><span>1</span><input type="radio" name="ht1" value="1" class="likert-radio"></label><label class="likert-option"><span>2</span><input type="radio" name="ht1" value="2" class="likert-radio"></label><label class="likert-option"><span>3</span><input type="radio" name="ht1" value="3" class="likert-radio"></label><label class="likert-option"><span>4</span><input type="radio" name="ht1" value="4" class="likert-radio"></label><label class="likert-option"><span>5</span><input type="radio" name="ht1" value="5" class="likert-radio"></label></div></div>
+                    <div><p class="font-medium">Hữu hình 2: Ứng dụng có nhiều tính năng hữu ích.</p><div class="likert-group"><label class="likert-option"><span>1</span><input type="radio" name="ht2" value="1" class="likert-radio"></label><label class="likert-option"><span>2</span><input type="radio" name="ht2" value="2" class="likert-radio"></label><label class="likert-option"><span>3</span><input type="radio" name="ht2" value="3" class="likert-radio"></label><label class="likert-option"><span>4</span><input type="radio" name="ht2" value="4" class="likert-radio"></label><label class="likert-option"><span>5</span><input type="radio" name="ht2" value="5" class="likert-radio"></label></div></div>
+                    <div><p class="font-medium">Hài lòng chung: Nhìn chung tôi hài lòng với BIDV SmartBanking.</p><div class="likert-group"><label class="likert-option"><span>1</span><input type="radio" name="haiLong" value="1" class="likert-radio"></label><label class="likert-option"><span>2</span><input type="radio" name="haiLong" value="2" class="likert-radio"></label><label class="likert-option"><span>3</span><input type="radio" name="haiLong" value="3" class="likert-radio"></label><label class="likert-option"><span>4</span><input type="radio" name="haiLong" value="4" class="likert-radio"></label><label class="likert-option"><span>5</span><input type="radio" name="haiLong" value="5" class="likert-radio"></label></div></div>
                 </div>
             </div>
 
-            <!-- ========= PHẦN D: KHÓ KHĂN & GÓP Ý ========= -->
+            <!-- Phần D -->
             <div class="survey-card p-6">
-                <h2 class="text-xl font-bold text-[#005391] border-l-4 border-[#00A69C] pl-3 mb-4">D. Phản hồi & đề xuất</h2>
+                <h2 class="text-xl font-bold section-title mb-4">D. Phản hồi & đề xuất</h2>
                 <div><label class="font-semibold">Khó khăn bạn gặp phải (chọn nhiều):</label><div class="grid grid-cols-2 gap-2 mt-2"><label><input type="checkbox" name="difficulties" value="Bảo trì thường xuyên"> Bảo trì thường xuyên</label><label><input type="checkbox" name="difficulties" value="Lỗi đăng nhập"> Lỗi đăng nhập</label><label><input type="checkbox" name="difficulties" value="Chậm xử lý giao dịch"> Chậm xử lý</label><label><input type="checkbox" name="difficulties" value="Phí dịch vụ cao"> Phí cao</label><label><input type="checkbox" name="difficulties" value="Khó khăn khi cài đặt"> Cài đặt phức tạp</label><label><input type="checkbox" name="difficulties" value="eKYC lỗi"> eKYC lỗi</label></div></div>
-                <div class="mt-5"><label class="font-semibold">Góp ý để cải thiện dịch vụ:</label><textarea name="feedback" rows="4" class="w-full border rounded-xl p-3 mt-1" placeholder="Chia sẻ ý kiến của bạn..."></textarea></div>
+                <div class="mt-5"><label class="font-semibold">Góp ý để cải thiện dịch vụ:</label><textarea name="feedback" rows="4" class="w-full border border-gray-300 rounded-xl p-3 mt-1 focus:ring-2 focus:ring-[#005391]" placeholder="Chia sẻ ý kiến của bạn..."></textarea></div>
             </div>
 
             <button type="submit" class="btn-submit w-full text-white font-bold py-4 rounded-2xl text-lg">📩 GỬI KHẢO SÁT</button>
@@ -80,7 +151,6 @@
         const form = document.getElementById('surveyForm');
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
-            // Lấy dữ liệu
             const gender = document.querySelector('input[name="gender"]:checked')?.value;
             const age = document.querySelector('select[name="age"]').value;
             const job = document.querySelector('select[name="job"]').value;
@@ -90,7 +160,6 @@
             const features = Array.from(document.querySelectorAll('input[name="features"]:checked')).map(cb=>cb.value);
             const difficulties = Array.from(document.querySelectorAll('input[name="difficulties"]:checked')).map(cb=>cb.value);
             const feedback = document.querySelector('textarea[name="feedback"]').value;
-            
             const likertFields = ['tc1','tc2','tc3','dapung1','dapung2','bm1','bm2','deDung1','deDung2','ht1','ht2','haiLong'];
             const likertValues = {};
             let missing = false;
