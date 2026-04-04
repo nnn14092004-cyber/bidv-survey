@@ -3,98 +3,123 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>BIDV SmartBanking - Khảo sát chất lượng</title>
+    <title>BIDV SmartBanking - Khảo sát trải nghiệm</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { background: #f2f4f8; font-family: 'Inter', sans-serif; }
-        .navbar { background: white; padding: 0.75rem 2rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; box-shadow: 0 2px 12px rgba(0,0,0,0.05); }
-        .logo { display: flex; align-items: center; gap: 0.5rem; font-weight: 800; font-size: 1.5rem; color: #005391; }
-        .logo img { height: 32px; width: auto; }
-        .nav-links { display: flex; gap: 1.5rem; font-size: 0.9rem; font-weight: 500; color: #1e2a3a; }
-        .hero { background: linear-gradient(135deg, #005391, #008b8b); color: white; padding: 2rem; text-align: center; border-radius: 0 0 2rem 2rem; margin-bottom: 2rem; }
-        .survey-card { background: white; border-radius: 1.5rem; box-shadow: 0 8px 20px rgba(0,0,0,0.05); padding: 1.8rem; margin-bottom: 1.5rem; }
-        .section-title { font-size: 1.4rem; font-weight: 700; color: #005391; border-left: 5px solid #00A69C; padding-left: 1rem; margin-bottom: 1.5rem; }
-        .likert-row { display: flex; align-items: center; justify-content: space-evenly; background: #f8fafc; padding: 0.5rem; border-radius: 2rem; margin: 0.75rem 0; flex-wrap: nowrap; gap: 0.25rem; }
-        .likert-option { display: inline-flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; min-width: 3rem; }
-        .likert-option span { font-size: 0.7rem; font-weight: 600; color: #1e293b; }
-        .likert-radio { appearance: none; width: 2rem; height: 2rem; border: 2px solid #cbd5e1; border-radius: 50%; background: white; cursor: pointer; margin: 0 auto; }
+        body { background: #f5f7fb; font-family: 'Inter', sans-serif; }
+        /* Header giống BIDV SmartBanking */
+        .top-bar { background: #005391; color: white; padding: 0.4rem 2rem; font-size: 0.75rem; display: flex; justify-content: space-between; }
+        .navbar { background: white; padding: 0.75rem 2rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; box-shadow: 0 4px 12px rgba(0,0,0,0.03); }
+        .logo { display: flex; align-items: center; gap: 0.5rem; font-weight: 800; font-size: 1.6rem; color: #005391; }
+        .logo i { font-size: 2rem; }
+        .nav-links { display: flex; gap: 1.8rem; font-weight: 500; color: #1e2a3a; }
+        .nav-links span { cursor: default; }
+        .hero { background: linear-gradient(135deg, #005391 0%, #008b8b 100%); padding: 2rem 2rem 3rem; text-align: center; color: white; border-radius: 0 0 2rem 2rem; margin-bottom: 2rem; }
+        .hero h1 { font-size: 2.2rem; font-weight: 700; margin-bottom: 0.5rem; }
+        .service-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin: 2rem auto; max-width: 1000px; }
+        .service-card { background: white; border-radius: 1.5rem; padding: 1rem; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.05); transition: 0.2s; }
+        .service-card i { font-size: 2rem; color: #005391; margin-bottom: 0.5rem; }
+        .service-card span { font-weight: 600; font-size: 0.9rem; }
+        .survey-container { max-width: 1000px; margin: 0 auto 2rem; }
+        .survey-card { background: white; border-radius: 1.8rem; padding: 2rem; margin-bottom: 1.8rem; box-shadow: 0 8px 24px rgba(0,0,0,0.05); transition: 0.2s; }
+        .section-title { font-size: 1.5rem; font-weight: 700; color: #005391; border-left: 5px solid #00A69C; padding-left: 1rem; margin-bottom: 1.5rem; }
+        .form-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.2rem; }
+        .form-field label { font-weight: 600; display: block; margin-bottom: 0.3rem; color: #1f2937; }
+        input, select, textarea { width: 100%; padding: 0.75rem 1rem; border: 1px solid #e2e8f0; border-radius: 1rem; outline: none; transition: 0.2s; font-family: inherit; }
+        input:focus, select:focus, textarea:focus { border-color: #005391; box-shadow: 0 0 0 3px rgba(0,83,145,0.1); }
+        .likert-row { display: flex; align-items: center; justify-content: space-between; background: #f8fafc; padding: 0.75rem 1rem; border-radius: 2rem; margin: 0.75rem 0; flex-wrap: wrap; gap: 0.3rem; }
+        .likert-option { display: inline-flex; flex-direction: column; align-items: center; cursor: pointer; min-width: 3rem; }
+        .likert-option span { font-size: 0.8rem; font-weight: 600; color: #334155; }
+        .likert-radio { appearance: none; width: 2rem; height: 2rem; border: 2px solid #cbd5e1; border-radius: 50%; background: white; cursor: pointer; margin-top: 0.2rem; }
         .likert-radio:checked { background-color: #005391; border-color: #005391; box-shadow: 0 0 0 2px white, 0 0 0 4px #005391; }
         .likert-radio:checked::after { content: ''; display: block; width: 0.9rem; height: 0.9rem; background: white; border-radius: 50%; margin: 0.35rem auto; }
-        input[type="radio"], input[type="checkbox"] { accent-color: #005391; width: 1.2rem; height: 1.2rem; margin-right: 0.4rem; vertical-align: middle; }
-        .inline-label { display: inline-flex; align-items: center; margin-right: 1rem; margin-bottom: 0.5rem; }
-        .grid-cols-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.5rem; }
-        select, textarea, input[type="text"], input[type="date"] { border: 1px solid #cfdfe8; border-radius: 1rem; padding: 0.6rem 1rem; width: 100%; outline: none; }
-        .btn-submit { background: linear-gradient(95deg, #005391, #00A69C); padding: 1rem; font-weight: bold; font-size: 1.1rem; border-radius: 2rem; color: white; width: 100%; cursor: pointer; transition: 0.2s; border: none; }
-        .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 12px 20px rgba(0,83,145,0.3); }
-        footer { text-align: center; padding: 2rem; font-size: 0.75rem; color: #7f8c8d; }
-        @media (max-width: 640px) { .navbar { flex-direction: column; gap: 0.5rem; } .likert-radio { width: 1.6rem; height: 1.6rem; } .likert-option { min-width: 2rem; } }
+        .radio-group, .checkbox-group { display: flex; flex-wrap: wrap; gap: 1rem; align-items: center; }
+        .radio-group label, .checkbox-group label { display: inline-flex; align-items: center; gap: 0.4rem; font-weight: normal; }
+        .btn-submit { background: linear-gradient(95deg, #005391, #00A69C); border: none; padding: 1rem; font-weight: bold; font-size: 1.1rem; border-radius: 2rem; color: white; width: 100%; cursor: pointer; transition: 0.2s; margin-top: 0.5rem; }
+        .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 12px 24px rgba(0,83,145,0.3); }
+        footer { text-align: center; padding: 2rem; font-size: 0.75rem; color: #6c757d; border-top: 1px solid #e2e8f0; margin-top: 2rem; }
+        @media (max-width: 768px) { .form-grid { grid-template-columns: 1fr; } .navbar { flex-direction: column; gap: 0.8rem; } .likert-radio { width: 1.6rem; height: 1.6rem; } }
     </style>
 </head>
 <body>
+    <div class="top-bar">
+        <span><i class="fas fa-phone-alt"></i> Hotline: 1900 9247</span>
+        <span>BIDV SmartBanking - Ngân hàng số hàng đầu</span>
+    </div>
     <div class="navbar">
         <div class="logo">
-            <!-- Logo BIDV (dùng chữ hoặc ảnh, ở đây dùng biểu tượng và chữ) -->
-            <span style="font-size:1.8rem;"></span> <span>BIDV</span>
+            <i class="fas fa-university"></i> <span>BIDV</span>
         </div>
         <div class="nav-links">
             <span>Cá nhân</span>
             <span>Doanh nghiệp</span>
-            <span>Tin về BIDV</span>
+            <span>Tin tức</span>
+            <span>Khuyến mãi</span>
         </div>
-        <!-- Đã xóa nút Đăng ký / Đăng nhập -->
     </div>
     <div class="hero">
         <h1>Khảo sát chất lượng SmartBanking</h1>
-        <p>Góp ý của bạn giúp chúng tôi phục vụ tốt hơn</p>
+        <p>Góp ý của bạn giúp chúng tôi phục vụ tốt hơn mỗi ngày</p>
     </div>
 
-    <div class="max-w-3xl mx-auto px-4">
+    <!-- Các dịch vụ nổi bật (giống giao diện smart banking) -->
+    <div class="service-grid">
+        <div class="service-card"><i class="fas fa-chart-line"></i><span>Đầu tư thông minh</span></div>
+        <div class="service-card"><i class="fas fa-wallet"></i><span>Ví điện tử</span></div>
+        <div class="service-card"><i class="fas fa-hand-holding-usd"></i><span>Vay ưu đãi</span></div>
+        <div class="service-card"><i class="fas fa-qrcode"></i><span>Thanh toán QR</span></div>
+        <div class="service-card"><i class="fas fa-robot"></i><span>Trợ lý AI</span></div>
+    </div>
+
+    <div class="survey-container">
         <form id="surveyForm">
-            <!-- A. Thông tin cá nhân -->
+            <!-- Phần A: Thông tin cá nhân -->
             <div class="survey-card">
                 <div class="section-title">A. Thông tin cá nhân</div>
-                <div class="grid md:grid-cols-2 gap-5">
-                    <div><label class="font-semibold">Họ và tên *</label><input type="text" name="fullName" placeholder="Nguyễn Văn A" required></div>
-                    <div><label class="font-semibold">Ngày sinh *</label><input type="date" name="dob" required></div>
-                    <div><label class="font-semibold">Giới tính *</label><div><label class="inline-label"><input type="radio" name="gender" value="Nam"> Nam</label><label class="inline-label"><input type="radio" name="gender" value="Nữ"> Nữ</label></div></div>
-                    <div><label class="font-semibold">Độ tuổi *</label><select name="age"><option value="">Chọn</option><option>Dưới 18</option><option>18-25</option><option>26-35</option><option>36-45</option><option>Trên 45</option></select></div>
-                    <div><label class="font-semibold">Nghề nghiệp *</label><select name="job"><option value="">Chọn</option><option>Học sinh/SV</option><option>Nhân viên văn phòng</option><option>Công chức</option><option>Kinh doanh tự do</option><option>Nội trợ</option><option>Đã nghỉ hưu</option><option>Khác</option></select></div>
-                    <div><label class="font-semibold">Thu nhập tháng</label><select name="income"><option>Dưới 5tr</option><option>5-10tr</option><option>10-20tr</option><option>Trên 20tr</option></select></div>
+                <div class="form-grid">
+                    <div class="form-field"><label>Họ và tên *</label><input type="text" name="fullName" placeholder="Nguyễn Văn A" required></div>
+                    <div class="form-field"><label>Ngày sinh *</label><input type="date" name="dob" required></div>
+                    <div class="form-field"><label>Giới tính *</label><div class="radio-group"><label><input type="radio" name="gender" value="Nam"> Nam</label><label><input type="radio" name="gender" value="Nữ"> Nữ</label></div></div>
+                    <div class="form-field"><label>Độ tuổi *</label><select name="age" required><option value="">Chọn</option><option>Dưới 18</option><option>18-25</option><option>26-35</option><option>36-45</option><option>Trên 45</option></select></div>
+                    <div class="form-field"><label>Nghề nghiệp *</label><select name="job" required><option value="">Chọn</option><option>Học sinh/SV</option><option>Nhân viên văn phòng</option><option>Công chức</option><option>Kinh doanh tự do</option><option>Nội trợ</option><option>Đã nghỉ hưu</option><option>Khác</option></select></div>
+                    <div class="form-field"><label>Thu nhập tháng</label><select name="income"><option>Dưới 5tr</option><option>5-10tr</option><option>10-20tr</option><option>Trên 20tr</option></select></div>
                 </div>
             </div>
 
-            <!-- B. Thói quen sử dụng -->
+            <!-- Phần B: Thói quen sử dụng -->
             <div class="survey-card">
                 <div class="section-title">B. Thói quen sử dụng</div>
-                <div class="space-y-4">
-                    <div><label class="font-semibold">Thời gian sử dụng *</label><div class="grid grid-cols-2 gap-2 mt-2"><label class="border p-2 rounded-xl text-center"><input type="radio" name="duration" value="<6 tháng"> <6 tháng</label><label class="border p-2 rounded-xl text-center"><input type="radio" name="duration" value="6-12 tháng"> 6-12 tháng</label><label class="border p-2 rounded-xl text-center"><input type="radio" name="duration" value="1-3 năm"> 1-3 năm</label><label class="border p-2 rounded-xl text-center"><input type="radio" name="duration" value=">3 năm"> >3 năm</label></div></div>
-                    <div><label class="font-semibold">Tần suất sử dụng</label><div><label class="inline-label"><input type="radio" name="frequency" value="Hàng ngày"> Hàng ngày</label><label class="inline-label"><input type="radio" name="frequency" value="2-3 lần/tuần"> 2-3 lần/tuần</label><label class="inline-label"><input type="radio" name="frequency" value="1 lần/tuần"> 1 lần/tuần</label><label class="inline-label"><input type="radio" name="frequency" value="Ít hơn"> Ít hơn</label></div></div>
-                    <div><label class="font-semibold">Tính năng thường dùng (chọn nhiều)</label><div class="grid grid-cols-2 gap-2"><label class="inline-label"><input type="checkbox" name="features" value="Chuyển tiền"> Chuyển tiền</label><label class="inline-label"><input type="checkbox" name="features" value="Thanh toán hóa đơn"> Thanh toán hóa đơn</label><label class="inline-label"><input type="checkbox" name="features" value="Tiết kiệm online"> Tiết kiệm online</label><label class="inline-label"><input type="checkbox" name="features" value="QR Pay"> QR Pay</label><label class="inline-label"><input type="checkbox" name="features" value="Vay tiêu dùng"> Vay tiêu dùng</label><label class="inline-label"><input type="checkbox" name="features" value="Mở thẻ"> Mở thẻ trực tuyến</label></div></div>
-                </div>
+                <div class="form-field"><label>Thời gian sử dụng *</label><div class="radio-group"><label><input type="radio" name="duration" value="<6 tháng"> <6 tháng</label><label><input type="radio" name="duration" value="6-12 tháng"> 6-12 tháng</label><label><input type="radio" name="duration" value="1-3 năm"> 1-3 năm</label><label><input type="radio" name="duration" value=">3 năm"> >3 năm</label></div></div>
+                <div class="form-field"><label>Tần suất sử dụng</label><div class="radio-group"><label><input type="radio" name="frequency" value="Hàng ngày"> Hàng ngày</label><label><input type="radio" name="frequency" value="2-3 lần/tuần"> 2-3 lần/tuần</label><label><input type="radio" name="frequency" value="1 lần/tuần"> 1 lần/tuần</label><label><input type="radio" name="frequency" value="Ít hơn"> Ít hơn</label></div></div>
+                <div class="form-field"><label>Tính năng thường dùng (chọn nhiều)</label><div class="checkbox-group"><label><input type="checkbox" name="features" value="Chuyển tiền"> Chuyển tiền</label><label><input type="checkbox" name="features" value="Thanh toán hóa đơn"> Hóa đơn</label><label><input type="checkbox" name="features" value="Tiết kiệm online"> Tiết kiệm</label><label><input type="checkbox" name="features" value="QR Pay"> QR Pay</label><label><input type="checkbox" name="features" value="Vay tiêu dùng"> Vay</label><label><input type="checkbox" name="features" value="Mở thẻ"> Mở thẻ</label></div></div>
             </div>
 
-            <!-- C. 20 câu Likert (tạo động) -->
+            <!-- Phần C: 20 câu hỏi Likert (tạo bằng JS) -->
             <div class="survey-card">
                 <div class="section-title">C. Đánh giá chất lượng (1=Rất không đồng ý → 5=Rất đồng ý)</div>
-                <div id="likertContainer" class="space-y-4"></div>
+                <div id="likertContainer"></div>
             </div>
 
-            <!-- D. Phản hồi & đề xuất -->
+            <!-- Phần D: Phản hồi -->
             <div class="survey-card">
                 <div class="section-title">D. Phản hồi & đề xuất</div>
-                <div><label class="font-semibold">Khó khăn gặp phải (chọn nhiều)</label><div class="grid grid-cols-2 gap-2 mt-2"><label class="inline-label"><input type="checkbox" name="difficulties" value="Bảo trì thường xuyên"> Bảo trì thường xuyên</label><label class="inline-label"><input type="checkbox" name="difficulties" value="Lỗi đăng nhập"> Lỗi đăng nhập</label><label class="inline-label"><input type="checkbox" name="difficulties" value="Chậm xử lý"> Chậm xử lý</label><label class="inline-label"><input type="checkbox" name="difficulties" value="Phí cao"> Phí cao</label><label class="inline-label"><input type="checkbox" name="difficulties" value="Cài đặt phức tạp"> Cài đặt phức tạp</label><label class="inline-label"><input type="checkbox" name="difficulties" value="eKYC lỗi"> eKYC lỗi</label></div></div>
-                <div class="mt-5"><label class="font-semibold">Góp ý cải thiện</label><textarea name="feedback" rows="3" placeholder="Chia sẻ ý kiến của bạn..."></textarea></div>
+                <div class="form-field"><label>Khó khăn gặp phải (chọn nhiều)</label><div class="checkbox-group"><label><input type="checkbox" name="difficulties" value="Bảo trì thường xuyên"> Bảo trì</label><label><input type="checkbox" name="difficulties" value="Lỗi đăng nhập"> Lỗi đăng nhập</label><label><input type="checkbox" name="difficulties" value="Chậm xử lý"> Chậm xử lý</label><label><input type="checkbox" name="difficulties" value="Phí cao"> Phí cao</label><label><input type="checkbox" name="difficulties" value="Cài đặt phức tạp"> Cài đặt phức tạp</label><label><input type="checkbox" name="difficulties" value="eKYC lỗi"> eKYC lỗi</label></div></div>
+                <div class="form-field"><label>Góp ý cải thiện</label><textarea name="feedback" rows="3" placeholder="Chia sẻ ý kiến của bạn..."></textarea></div>
             </div>
 
-            <button type="submit" class="btn-submit"> GỬI KHẢO SÁT</button>
+            <button type="submit" class="btn-submit"><i class="fas fa-paper-plane"></i> GỬI KHẢO SÁT</button>
         </form>
-        <footer>© Nghiên cứu Fintech – BIDV SmartBanking | Mọi thông tin được bảo mật</footer>
     </div>
 
+    <footer>
+        <p>© 2025 BIDV SmartBanking – Nghiên cứu Fintech | Mọi thông tin được bảo mật</p>
+    </footer>
+
     <script>
-        // 20 câu hỏi Likert
+        // 20 câu hỏi Likert (giống như trước)
         const likertQuestions = [
             { name: "tc1", text: "TC1: Hệ thống hoạt động ổn định, ít khi bị gián đoạn." },
             { name: "tc2", text: "TC2: Giao dịch được xử lý chính xác, không sai sót." },
@@ -132,6 +157,7 @@
             }
         });
 
+        // Xử lý submit
         const form = document.getElementById('surveyForm');
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -148,7 +174,7 @@
             const feedback = document.querySelector('textarea[name="feedback"]').value;
 
             if (!fullName || !dob || !gender || !age || !job || !duration) {
-                alert("Vui lòng điền đầy đủ thông tin bắt buộc (Họ tên, Ngày sinh, Giới tính, Độ tuổi, Nghề nghiệp, Thời gian sử dụng)");
+                alert("Vui lòng điền đầy đủ thông tin bắt buộc");
                 return;
             }
             const likertValues = {};
@@ -159,7 +185,7 @@
                 likertValues[q.name] = val ? parseInt(val) : null;
             });
             if (missing) {
-                alert("Vui lòng đánh giá đầy đủ 20 tiêu chí chất lượng (1-5)");
+                alert("Vui lòng đánh giá đầy đủ 20 tiêu chí");
                 return;
             }
             const payload = { fullName, dob, gender, age, job, income, duration, frequency, features, difficulties, feedback, ...likertValues, submittedAt: new Date().toISOString() };
@@ -169,7 +195,7 @@
                 if (result.success) alert(" Cảm ơn bạn! Khảo sát đã được ghi nhận.");
                 else alert(" Lỗi: " + (result.message||"Thử lại sau"));
                 if (result.success) form.reset();
-            } catch(err) { alert("Lỗi kết nối máy chủ. Vui lòng thử lại."); }
+            } catch(err) { alert("Lỗi kết nối máy chủ"); }
         });
     </script>
 </body>

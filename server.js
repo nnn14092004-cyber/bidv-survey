@@ -22,10 +22,9 @@ function writeDB(data) {
   fs.writeFileSync(DB_FILE, JSON.stringify(data, null, 2));
 }
 
-// Nhận phản hồi khảo sát
 app.post('/api/submit', (req, res) => {
   try {
-    console.log(' Received:', req.body.fullName, req.body.dob, Object.keys(req.body).length);
+    console.log(' Received:', req.body.fullName, req.body.dob);
     const db = readDB();
     const newResp = req.body;
     newResp.id = Date.now();
@@ -39,7 +38,6 @@ app.post('/api/submit', (req, res) => {
   }
 });
 
-// Lấy thống kê (có timeline)
 app.get('/api/admin/stats', (req, res) => {
   try {
     const db = readDB();
@@ -95,11 +93,12 @@ app.get('/api/admin/stats', (req, res) => {
   }
 });
 
-// Reset dữ liệu - sửa lỗi so sánh mật khẩu
+// Reset dữ liệu – sửa lỗi so sánh mật khẩu
 app.post('/api/admin/reset', (req, res) => {
   const { password } = req.body;
-  console.log('Reset attempt with password:', password);
-  if (password !== 'bidv2025') {
+  const trimmedPwd = password ? password.trim() : '';
+  console.log(`Reset attempt with password: "${trimmedPwd}"`);
+  if (trimmedPwd !== 'bidv2025') {
     return res.status(401).json({ success: false, message: 'Sai mật khẩu admin' });
   }
   try {
