@@ -24,7 +24,7 @@ function writeDB(data) {
 
 app.post('/api/submit', (req, res) => {
   try {
-    console.log(' Received:', req.body.fullName, req.body.dob);
+    console.log(' Received survey:', req.body.fullName, req.body.dob);
     const db = readDB();
     const newResp = req.body;
     newResp.id = Date.now();
@@ -93,12 +93,11 @@ app.get('/api/admin/stats', (req, res) => {
   }
 });
 
-// Reset dữ liệu – sửa lỗi so sánh mật khẩu
+// Reset endpoint - so sánh trực tiếp, in log để debug
 app.post('/api/admin/reset', (req, res) => {
   const { password } = req.body;
-  const trimmedPwd = password ? password.trim() : '';
-  console.log(`Reset attempt with password: "${trimmedPwd}"`);
-  if (trimmedPwd !== 'bidv2025') {
+  console.log('Reset password received:', password);
+  if (password !== '14092004') {
     return res.status(401).json({ success: false, message: 'Sai mật khẩu admin' });
   }
   try {
