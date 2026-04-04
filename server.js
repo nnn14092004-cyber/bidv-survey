@@ -22,7 +22,7 @@ function writeDB(data) {
   fs.writeFileSync(DB_FILE, JSON.stringify(data, null, 2));
 }
 
-// API nhận phản hồi
+// Nhận phản hồi khảo sát
 app.post('/api/submit', (req, res) => {
   try {
     const db = readDB();
@@ -38,7 +38,7 @@ app.post('/api/submit', (req, res) => {
   }
 });
 
-// API lấy thống kê (bao gồm fullName, dob)
+// Lấy thống kê cho admin
 app.get('/api/admin/stats', (req, res) => {
   try {
     const db = readDB();
@@ -56,8 +56,8 @@ app.get('/api/admin/stats', (req, res) => {
       deDung1:0, deDung2:0,
       ht1:0, ht2:0,
       haiLong:0,
-      // 8 câu mới
-      cskh1:0, tinhnang1:0, tocdo1:0, huongdan1:0, sinhtrac1:0, baotri1:0, phicn1:0, nhandien1:0
+      cskh1:0, tinhnang1:0, tocdo1:0, huongdan1:0,
+      sinhtrac1:0, baotri1:0, phicn1:0, nhandien1:0
     };
     const featureFreq = {};
     const difficultyFreq = {};
@@ -96,10 +96,10 @@ app.get('/api/admin/stats', (req, res) => {
   }
 });
 
-// API reset toàn bộ dữ liệu (chỉ admin với mật khẩu)
+// Reset toàn bộ dữ liệu (yêu cầu mật khẩu)
 app.post('/api/admin/reset', (req, res) => {
   const { password } = req.body;
-  if (password !== 'bidv2025') {
+  if (password !== '14092004') {
     return res.status(401).json({ success: false, message: 'Sai mật khẩu admin' });
   }
   try {
@@ -119,5 +119,5 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(` Server running at http://localhost:${PORT}`);
   console.log(` Survey: http://localhost:${PORT}`);
-  console.log(` Admin: http://localhost:${PORT}/admin (pass: bidv2025)`);
+  console.log(` Admin: http://localhost:${PORT}/admin (pass: 14092004)`);
 });

@@ -33,7 +33,7 @@
 
     <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
     <script>
-        const PASSWORD = "bidv2025";
+        const PASSWORD = "14092004";
         const pwd = prompt(" Nhập mật khẩu quản trị:");
         if(pwd !== PASSWORD) { document.body.innerHTML = '<div class="text-center text-red-600 p-10"> Sai mật khẩu</div>'; throw new Error("Unauth"); }
 
@@ -136,7 +136,7 @@
                 currentData = data;
                 renderStats(data);
             } catch(err) {
-                document.getElementById('statsContainer').innerHTML = `<div class="bg-red-100 text-red-700 p-4 rounded-2xl">❌ Lỗi: ${err.message}</div>`;
+                document.getElementById('statsContainer').innerHTML = `<div class="bg-red-100 text-red-700 p-4 rounded-2xl"> Lỗi: ${err.message}</div>`;
             }
         }
 
