@@ -3,72 +3,89 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BIDV Admin Dashboard</title>
+    <title>BIDV Admin - Quản lý khảo sát</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <style>
-        body { background: #f0f2f5; font-family: system-ui; }
-        .stat-card { background: white; border-radius: 1.5rem; padding: 1.2rem; box-shadow: 0 2px 8px rgba(0,0,0,0.05); transition: 0.2s; }
-        .stat-card:hover { box-shadow: 0 8px 20px rgba(0,0,0,0.1); }
-        .chart-container { max-height: 300px; }
-        .table-responsive { overflow-x: auto; border-radius: 1rem; }
-        table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
-        th, td { padding: 0.75rem; text-align: left; border-bottom: 1px solid #e2e8f0; }
-        th { background: #f8fafc; font-weight: 600; color: #1e293b; }
-        tr:hover { background: #fef9e3; }
-        .refresh-note { font-size: 0.7rem; color: #6c757d; text-align: right; margin-top: 0.5rem; }
+        body { background: #f0f2f5; }
+        .stat-card { background: white; border-radius: 1.5rem; padding: 1.2rem; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .table-responsive { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
+        th, td { padding: 0.6rem; text-align: left; border-bottom: 1px solid #e2e8f0; }
+        th { background: #f1f5f9; }
+        .btn-reset { background: #dc2626; color: white; padding: 0.5rem 1rem; border-radius: 2rem; margin-left: 0.5rem; }
+        .btn-reset:hover { background: #b91c1c; }
     </style>
 </head>
 <body class="p-4 md:p-6">
     <div class="max-w-7xl mx-auto">
         <div class="flex flex-wrap justify-between items-center mb-6 gap-3">
-            <h1 class="text-2xl font-bold text-[#005391]"> BIDV SmartBanking – Tổng hợp khảo sát</h1>
+            <h1 class="text-2xl font-bold text-[#005391]"> BIDV SmartBanking – Quản trị</h1>
             <div class="flex gap-3">
-                <button onclick="exportToExcel()" class="bg-green-700 text-white px-4 py-2 rounded-xl text-sm shadow"> Xuất Excel</button>
-                <button onclick="refreshData()" class="bg-blue-600 text-white px-4 py-2 rounded-xl text-sm shadow"> Làm mới</button>
+                <button onclick="exportToExcel()" class="bg-green-700 text-white px-4 py-2 rounded-xl text-sm"> Xuất Excel</button>
+                <button onclick="refreshData()" class="bg-blue-600 text-white px-4 py-2 rounded-xl text-sm"> Làm mới</button>
+                <button onclick="confirmReset()" class="btn-reset"> Reset dữ liệu</button>
             </div>
         </div>
-        <div id="statsContainer" class="space-y-6">
-            <div class="text-center py-10 text-gray-500">⏳ Đang tải dữ liệu...</div>
-        </div>
-        <div class="refresh-note">Dữ liệu tự động cập nhật mỗi 30 giây | Tổng số phản hồi không giới hạn, hiển thị 100 gần nhất</div>
+        <div id="statsContainer" class="space-y-6"><div class="text-center py-10"> Đang tải...</div></div>
+        <div class="text-right text-xs text-gray-400 mt-4">Tự động cập nhật mỗi 30 giây</div>
     </div>
 
     <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
     <script>
-        const PASSWORD = "14092004";
+        const PASSWORD = "bidv2025";
         const pwd = prompt(" Nhập mật khẩu quản trị:");
-        if(pwd !== PASSWORD) {
-            document.body.innerHTML = '<div class="text-center text-red-600 p-10 font-bold"> Truy cập bị từ chối. Sai mật khẩu.</div>';
-            throw new Error("Unauthorized");
-        }
+        if(pwd !== PASSWORD) { document.body.innerHTML = '<div class="text-center text-red-600 p-10"> Sai mật khẩu</div>'; throw new Error("Unauth"); }
 
         let currentData = null;
         let chartInstance = null;
 
         async function fetchStats() {
             const res = await fetch('/api/admin/stats');
-            if (!res.ok) throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
             return res.json();
+        }
+
+        async function resetData() {
+            const res = await fetch('/api/admin/reset', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ password: PASSWORD })
+            });
+            const data = await res.json();
+            if (data.success) {
+                alert(" Đã xóa toàn bộ dữ liệu khảo sát!");
+                refreshData();
+            } else {
+                alert(" Lỗi reset: " + data.message);
+            }
+        }
+
+        function confirmReset() {
+            if (confirm(" CẢNH BÁO: Bạn sẽ xóa VĨNH VIỄN tất cả phản hồi khảo sát. Hành động này không thể hoàn tác. Bạn có chắc chắn?")) {
+                resetData();
+            }
         }
 
         function renderChart(likertAvg) {
             const ctx = document.getElementById('avgChart')?.getContext('2d');
             if (!ctx) return;
             if (chartInstance) chartInstance.destroy();
-            const labels = ['TC1', 'TC2', 'TC3', 'Đáp ứng1', 'Đáp ứng2', 'BM1', 'BM2', 'Dễ dùng1', 'Dễ dùng2', 'Hữu hình1', 'Hữu hình2', 'Hài lòng'];
+            const labels = ['TC1','TC2','TC3','Đáp ứng1','Đáp ứng2','BM1','BM2','Dễ dùng1','Dễ dùng2','Hữu hình1','Hữu hình2','Hài lòng','CSKH','Tính năng','Tốc độ','Hướng dẫn','Sinh trắc','Bảo trì','Phí','Nhận diện'];
             const values = [
                 likertAvg.tc1, likertAvg.tc2, likertAvg.tc3,
                 likertAvg.dapung1, likertAvg.dapung2,
                 likertAvg.bm1, likertAvg.bm2,
                 likertAvg.deDung1, likertAvg.deDung2,
-                likertAvg.ht1, likertAvg.ht2,
-                likertAvg.haiLong
+                likertAvg.ht1, likertAvg.ht2, likertAvg.haiLong,
+                likertAvg.cskh1, likertAvg.tinhnang1, likertAvg.tocdo1,
+                likertAvg.huongdan1, likertAvg.sinhtrac1, likertAvg.baotri1,
+                likertAvg.phicn1, likertAvg.nhandien1
             ];
             chartInstance = new Chart(ctx, {
                 type: 'bar',
-                data: { labels, datasets: [{ label: 'Điểm trung bình (1-5)', data: values, backgroundColor: '#005391', borderRadius: 8 }] },
-                options: { responsive: true, maintainAspectRatio: true, scales: { y: { min: 1, max: 5, stepSize: 1 } }, plugins: { legend: { position: 'top' } } }
+                data: { labels, datasets: [{ label: 'Điểm TB (1-5)', data: values, backgroundColor: '#005391', borderRadius: 8 }] },
+                options: { responsive: true, maintainAspectRatio: true, scales: { y: { min: 1, max: 5 } } }
             });
         }
 
@@ -77,25 +94,33 @@
             let html = `
                 <div class="grid md:grid-cols-4 gap-4">
                     <div class="stat-card"><div class="text-3xl font-bold text-[#005391]">${total}</div><div> Tổng phản hồi</div></div>
-                    <div class="stat-card"><div class="font-semibold"> Giới tính</div><div>Nam: ${genderCount.Nam||0}</div><div>Nữ: ${genderCount.Nữ||0}</div></div>
-                    <div class="stat-card"><div class="font-semibold"> Độ tuổi</div>${Object.entries(ageGroups).map(([k,v])=>`<div>${k}: ${v}</div>`).join('')||'Chưa có'}</div>
-                    <div class="stat-card"><div class="font-semibold"> Thời gian dùng</div>${Object.entries(durationCount).map(([k,v])=>`<div>${k}: ${v}</div>`).join('')}</div>
+                    <div class="stat-card"><div> Nam: ${genderCount.Nam||0}<br> Nữ: ${genderCount.Nữ||0}</div></div>
+                    <div class="stat-card"><div class="font-semibold"> Độ tuổi</div>${Object.entries(ageGroups).map(([k,v])=>`${k}: ${v}<br>`).join('')}</div>
+                    <div class="stat-card"><div class="font-semibold"> Thời gian dùng</div>${Object.entries(durationCount).map(([k,v])=>`${k}: ${v}<br>`).join('')}</div>
                 </div>
-                <div class="stat-card">
-                    <div class="flex justify-between items-center flex-wrap mb-3"><h2 class="font-bold text-lg"> Điểm trung bình các tiêu chí</h2></div>
-                    <div class="chart-container"><canvas id="avgChart" height="200"></canvas></div>
-                </div>
+                <div class="stat-card"><canvas id="avgChart" height="250"></canvas></div>
                 <div class="grid md:grid-cols-2 gap-4">
                     <div class="stat-card"><h2 class="font-bold"> Tính năng dùng nhiều</h2><ul class="list-disc pl-5">${Object.entries(featureFreq).map(([k,v])=>`<li>${k}: ${v}</li>`).join('')||'<li>Chưa có</li>'}</ul></div>
-                    <div class="stat-card"><h2 class="font-bold"> Khó khăn thường gặp</h2><ul class="list-disc pl-5">${Object.entries(difficultyFreq).map(([k,v])=>`<li>${k}: ${v}</li>`).join('')||'<li>Chưa có</li>'}</ul></div>
+                    <div class="stat-card"><h2 class="font-bold"> Khó khăn gặp phải</h2><ul class="list-disc pl-5">${Object.entries(difficultyFreq).map(([k,v])=>`<li>${k}: ${v}</li>`).join('')||'<li>Chưa có</li>'}</ul></div>
                 </div>
                 <div class="stat-card">
-                    <h2 class="font-bold text-lg mb-2"> 100 phản hồi gần nhất (không giới hạn tổng số)</h2>
+                    <h2 class="font-bold text-lg mb-2"> 200 phản hồi gần nhất (có Họ tên, Ngày sinh)</h2>
                     <div class="table-responsive">
-                        <table>
-                            <thead><tr><th>Thời gian</th><th>GT</th><th>Tuổi</th><th>Điểm TB</th><th>Góp ý</th></tr></thead>
+                        <table class="min-w-full">
+                            <thead><tr><th>Thời gian</th><th>Họ tên</th><th>Ngày sinh</th><th>GT</th><th>Tuổi</th><th>Điểm TB</th><th>Góp ý</th></tr></thead>
                             <tbody>
-                                ${rawResponses.slice(0,100).map(r => `<tr><td>${new Date(r.submittedAt).toLocaleString()}</td><td>${r.gender}</td><td>${r.age}</td><td>${((r.tc1+r.tc2+r.tc3+r.dapung1+r.dapung2+r.bm1+r.bm2+r.deDung1+r.deDung2+r.ht1+r.ht2+r.haiLong)/12).toFixed(1)}</td><td>${(r.feedback||'').substring(0,100)}</td></tr>`).join('')}
+                                ${rawResponses.slice(0,100).map(r => `
+                                    <tr>
+                                        <td>${new Date(r.submittedAt).toLocaleString()}</td>
+                                        <td>${r.fullName || '??'}</td>
+                                        <td>${r.dob || '??'}</td>
+                                        <td>${r.gender}</td>
+                                        <td>${r.age}</td>
+                                        <td>${((r.tc1+r.tc2+r.tc3+r.dapung1+r.dapung2+r.bm1+r.bm2+r.deDung1+r.deDung2+r.ht1+r.ht2+r.haiLong+
+                                            (r.cskh1||0)+(r.tinhnang1||0)+(r.tocdo1||0)+(r.huongdan1||0)+(r.sinhtrac1||0)+(r.baotri1||0)+(r.phicn1||0)+(r.nhandien1||0))/20).toFixed(1)}</td>
+                                        <td>${(r.feedback||'').substring(0,80)}</td>
+                                    </tr>
+                                `).join('')}
                             </tbody>
                         </table>
                     </div>
@@ -110,19 +135,20 @@
                 const data = await fetchStats();
                 currentData = data;
                 renderStats(data);
-            } catch (err) {
-                document.getElementById('statsContainer').innerHTML = `<div class="bg-red-100 text-red-700 p-4 rounded-2xl"> Lỗi tải: ${err.message}<br>🔧 Kiểm tra kết nối hoặc thử lại sau.</div>`;
+            } catch(err) {
+                document.getElementById('statsContainer').innerHTML = `<div class="bg-red-100 text-red-700 p-4 rounded-2xl">❌ Lỗi: ${err.message}</div>`;
             }
         }
 
         function exportToExcel() {
-            if (!currentData) return alert('Chưa có dữ liệu để xuất');
+            if (!currentData) return alert('Chưa có dữ liệu');
             const wsData = currentData.rawResponses.map(r => ({
-                'Thời gian': r.submittedAt, 'Giới tính': r.gender, 'Tuổi': r.age, 'Nghề nghiệp': r.job,
-                'TC1': r.tc1, 'TC2': r.tc2, 'TC3': r.tc3, 'Đáp ứng1': r.dapung1, 'Đáp ứng2': r.dapung2,
-                'Bảo mật1': r.bm1, 'Bảo mật2': r.bm2, 'Dễ dùng1': r.deDung1, 'Dễ dùng2': r.deDung2,
-                'Hữu hình1': r.ht1, 'Hữu hình2': r.ht2, 'Hài lòng': r.haiLong,
-                'Khó khăn': (r.difficulties||[]).join(', '), 'Góp ý': r.feedback
+                'Thời gian': r.submittedAt, 'Họ tên': r.fullName, 'Ngày sinh': r.dob, 'Giới tính': r.gender, 'Tuổi': r.age,
+                'Nghề nghiệp': r.job, 'TC1': r.tc1, 'TC2': r.tc2, 'TC3': r.tc3, 'Đáp ứng1': r.dapung1, 'Đáp ứng2': r.dapung2,
+                'BM1': r.bm1, 'BM2': r.bm2, 'Dễ dùng1': r.deDung1, 'Dễ dùng2': r.deDung2, 'Hữu hình1': r.ht1, 'Hữu hình2': r.ht2,
+                'CSKH1': r.cskh1, 'Tính năng1': r.tinhnang1, 'Tốc độ1': r.tocdo1, 'Hướng dẫn1': r.huongdan1,
+                'Sinh trắc1': r.sinhtrac1, 'Bảo trì1': r.baotri1, 'Phí1': r.phicn1, 'Nhận diện1': r.nhandien1,
+                'Hài lòng': r.haiLong, 'Khó khăn': (r.difficulties||[]).join(', '), 'Góp ý': r.feedback
             }));
             const ws = XLSX.utils.json_to_sheet(wsData);
             const wb = XLSX.utils.book_new();
@@ -130,7 +156,6 @@
             XLSX.writeFile(wb, `BIDV_Survey_${new Date().toISOString().slice(0,19)}.xlsx`);
         }
 
-        // Tự động refresh mỗi 30 giây
         refreshData();
         setInterval(refreshData, 30000);
     </script>

@@ -8,13 +8,11 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static('public'));
 
-// Khởi tạo file db.json nếu chưa có
 const DB_FILE = 'db.json';
 if (!fs.existsSync(DB_FILE)) {
   fs.writeFileSync(DB_FILE, JSON.stringify({ responses: [] }, null, 2));
 }
 
-// Đọc dữ liệu
 function readDB() {
   const data = fs.readFileSync(DB_FILE, 'utf8');
   return JSON.parse(data);
@@ -40,7 +38,7 @@ app.post('/api/submit', (req, res) => {
   }
 });
 
-// API lấy thống kê
+// API lấy thống kê (bao gồm fullName, dob)
 app.get('/api/admin/stats', (req, res) => {
   try {
     const db = readDB();
@@ -57,7 +55,9 @@ app.get('/api/admin/stats', (req, res) => {
       bm1:0, bm2:0,
       deDung1:0, deDung2:0,
       ht1:0, ht2:0,
-      haiLong:0
+      haiLong:0,
+      // 8 câu mới
+      cskh1:0, tinhnang1:0, tocdo1:0, huongdan1:0, sinhtrac1:0, baotri1:0, phicn1:0, nhandien1:0
     };
     const featureFreq = {};
     const difficultyFreq = {};
@@ -93,6 +93,20 @@ app.get('/api/admin/stats', (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: err.message });
+  }
+});
+
+// API reset toàn bộ dữ liệu (chỉ admin với mật khẩu)
+app.post('/api/admin/reset', (req, res) => {
+  const { password } = req.body;
+  if (password !== 'bidv2025') {
+    return res.status(401).json({ success: false, message: 'Sai mật khẩu admin' });
+  }
+  try {
+    writeDB({ responses: [] });
+    res.json({ success: true, message: 'Đã xóa toàn bộ dữ liệu khảo sát' });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
   }
 });
 
