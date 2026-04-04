@@ -10,126 +10,45 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { background: #f2f4f8; font-family: 'Inter', sans-serif; }
         .navbar { background: white; padding: 0.75rem 2rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; box-shadow: 0 2px 12px rgba(0,0,0,0.05); }
-        .logo { font-weight: 800; font-size: 1.5rem; color: #005391; }
-        .nav-links { display: flex; gap: 1.5rem; font-size: 0.9rem; font-weight: 500; }
-        .auth-buttons button { background: #005391; color: white; border: none; padding: 0.4rem 1rem; border-radius: 2rem; margin-left: 0.5rem; cursor: pointer; }
+        .logo { display: flex; align-items: center; gap: 0.5rem; font-weight: 800; font-size: 1.5rem; color: #005391; }
+        .logo img { height: 32px; width: auto; }
+        .nav-links { display: flex; gap: 1.5rem; font-size: 0.9rem; font-weight: 500; color: #1e2a3a; }
         .hero { background: linear-gradient(135deg, #005391, #008b8b); color: white; padding: 2rem; text-align: center; border-radius: 0 0 2rem 2rem; margin-bottom: 2rem; }
         .survey-card { background: white; border-radius: 1.5rem; box-shadow: 0 8px 20px rgba(0,0,0,0.05); padding: 1.8rem; margin-bottom: 1.5rem; }
         .section-title { font-size: 1.4rem; font-weight: 700; color: #005391; border-left: 5px solid #00A69C; padding-left: 1rem; margin-bottom: 1.5rem; }
-        .likert-row {
-            display: flex;
-            align-items: center;
-            justify-content: space-evenly;
-            background: #f8fafc;
-            padding: 0.5rem;
-            border-radius: 2rem;
-            margin: 0.75rem 0;
-            flex-wrap: nowrap;
-            gap: 0.25rem;
-        }
-        .likert-option {
-            display: inline-flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            min-width: 3rem;
-        }
-        .likert-option span {
-            font-size: 0.7rem;
-            font-weight: 600;
-            color: #1e293b;
-        }
-        .likert-radio {
-            appearance: none;
-            width: 2rem;
-            height: 2rem;
-            border: 2px solid #cbd5e1;
-            border-radius: 50%;
-            background: white;
-            cursor: pointer;
-            transition: 0.1s;
-            margin: 0 auto;
-        }
-        .likert-radio:checked {
-            background-color: #005391;
-            border-color: #005391;
-            box-shadow: 0 0 0 2px white, 0 0 0 4px #005391;
-        }
-        .likert-radio:checked::after {
-            content: '';
-            display: block;
-            width: 0.9rem;
-            height: 0.9rem;
-            background: white;
-            border-radius: 50%;
-            margin: 0.35rem auto;
-        }
-        input[type="radio"], input[type="checkbox"] {
-            accent-color: #005391;
-            width: 1.2rem;
-            height: 1.2rem;
-            margin-right: 0.4rem;
-            vertical-align: middle;
-        }
-        .inline-label {
-            display: inline-flex;
-            align-items: center;
-            margin-right: 1rem;
-            margin-bottom: 0.5rem;
-        }
-        .grid-cols-2 {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 0.5rem;
-        }
-        select, textarea, input[type="text"], input[type="date"] {
-            border: 1px solid #cfdfe8;
-            border-radius: 1rem;
-            padding: 0.6rem 1rem;
-            width: 100%;
-            outline: none;
-        }
-        select:focus, textarea:focus, input:focus {
-            border-color: #005391;
-            box-shadow: 0 0 0 2px rgba(0,83,145,0.2);
-        }
-        .btn-submit {
-            background: linear-gradient(95deg, #005391, #00A69C);
-            padding: 1rem;
-            font-weight: bold;
-            font-size: 1.1rem;
-            border-radius: 2rem;
-            color: white;
-            width: 100%;
-            cursor: pointer;
-            transition: 0.2s;
-            border: none;
-        }
-        .btn-submit:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 12px 20px rgba(0,83,145,0.3);
-        }
-        footer {
-            text-align: center;
-            padding: 2rem;
-            font-size: 0.75rem;
-            color: #7f8c8d;
-        }
-        @media (max-width: 640px) {
-            .navbar { flex-direction: column; gap: 0.5rem; }
-            .likert-radio { width: 1.6rem; height: 1.6rem; }
-            .likert-option { min-width: 2rem; }
-        }
+        .likert-row { display: flex; align-items: center; justify-content: space-evenly; background: #f8fafc; padding: 0.5rem; border-radius: 2rem; margin: 0.75rem 0; flex-wrap: nowrap; gap: 0.25rem; }
+        .likert-option { display: inline-flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; min-width: 3rem; }
+        .likert-option span { font-size: 0.7rem; font-weight: 600; color: #1e293b; }
+        .likert-radio { appearance: none; width: 2rem; height: 2rem; border: 2px solid #cbd5e1; border-radius: 50%; background: white; cursor: pointer; margin: 0 auto; }
+        .likert-radio:checked { background-color: #005391; border-color: #005391; box-shadow: 0 0 0 2px white, 0 0 0 4px #005391; }
+        .likert-radio:checked::after { content: ''; display: block; width: 0.9rem; height: 0.9rem; background: white; border-radius: 50%; margin: 0.35rem auto; }
+        input[type="radio"], input[type="checkbox"] { accent-color: #005391; width: 1.2rem; height: 1.2rem; margin-right: 0.4rem; vertical-align: middle; }
+        .inline-label { display: inline-flex; align-items: center; margin-right: 1rem; margin-bottom: 0.5rem; }
+        .grid-cols-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.5rem; }
+        select, textarea, input[type="text"], input[type="date"] { border: 1px solid #cfdfe8; border-radius: 1rem; padding: 0.6rem 1rem; width: 100%; outline: none; }
+        .btn-submit { background: linear-gradient(95deg, #005391, #00A69C); padding: 1rem; font-weight: bold; font-size: 1.1rem; border-radius: 2rem; color: white; width: 100%; cursor: pointer; transition: 0.2s; border: none; }
+        .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 12px 20px rgba(0,83,145,0.3); }
+        footer { text-align: center; padding: 2rem; font-size: 0.75rem; color: #7f8c8d; }
+        @media (max-width: 640px) { .navbar { flex-direction: column; gap: 0.5rem; } .likert-radio { width: 1.6rem; height: 1.6rem; } .likert-option { min-width: 2rem; } }
     </style>
 </head>
 <body>
     <div class="navbar">
-        <div class="logo"> BIDV</div>
-        <div class="nav-links"><span>Cá nhân</span><span>Doanh nghiệp</span><span>Tin về BIDV</span></div>
-        <div class="auth-buttons"><button>Đăng ký</button><button>Đăng nhập</button></div>
+        <div class="logo">
+            <!-- Logo BIDV (dùng chữ hoặc ảnh, ở đây dùng biểu tượng và chữ) -->
+            <span style="font-size:1.8rem;"></span> <span>BIDV</span>
+        </div>
+        <div class="nav-links">
+            <span>Cá nhân</span>
+            <span>Doanh nghiệp</span>
+            <span>Tin về BIDV</span>
+        </div>
+        <!-- Đã xóa nút Đăng ký / Đăng nhập -->
     </div>
-    <div class="hero"><h1>Khảo sát chất lượng SmartBanking</h1><p>Góp ý của bạn giúp chúng tôi phục vụ tốt hơn</p></div>
+    <div class="hero">
+        <h1>Khảo sát chất lượng SmartBanking</h1>
+        <p>Góp ý của bạn giúp chúng tôi phục vụ tốt hơn</p>
+    </div>
 
     <div class="max-w-3xl mx-auto px-4">
         <form id="surveyForm">
@@ -156,7 +75,7 @@
                 </div>
             </div>
 
-            <!-- C. 20 câu Likert (tạo động bằng JavaScript) -->
+            <!-- C. 20 câu Likert (tạo động) -->
             <div class="survey-card">
                 <div class="section-title">C. Đánh giá chất lượng (1=Rất không đồng ý → 5=Rất đồng ý)</div>
                 <div id="likertContainer" class="space-y-4"></div>
@@ -213,7 +132,6 @@
             }
         });
 
-        // Xử lý submit form
         const form = document.getElementById('surveyForm');
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
