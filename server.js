@@ -97,7 +97,7 @@ app.get('/api/admin/stats', (req, res) => {
 app.post('/api/admin/reset', (req, res) => {
   const { password } = req.body;
   console.log('Reset password received:', password);
-  if (password !== '14092004') {
+  if (password !== 'bidv2025') {
     return res.status(401).json({ success: false, message: 'Sai mật khẩu admin' });
   }
   try {
