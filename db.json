@@ -32,6 +32,47 @@
       "haiLong": 4,
       "submittedAt": "2026-04-03T16:26:19.229Z",
       "id": 1775233579229
+    },
+    {
+      "fullName": "Trần Nhật",
+      "dob": "90320-12-06",
+      "gender": "Nam",
+      "age": "26-35",
+      "job": "Đã nghỉ hưu",
+      "income": "10-20tr",
+      "duration": "1-3 năm",
+      "frequency": "Ít hơn",
+      "features": [
+        "Vay tiêu dùng",
+        "Mở thẻ"
+      ],
+      "difficulties": [
+        "Chậm xử lý",
+        "eKYC lỗi"
+      ],
+      "feedback": "Tổng thể hài lòng, tiếp tục nâng cấp để phục vụ tốt hơn.",
+      "tc1": 3,
+      "tc2": 4,
+      "tc3": 5,
+      "dapung1": 3,
+      "dapung2": 2,
+      "bm1": 2,
+      "bm2": 5,
+      "deDung1": 5,
+      "deDung2": 4,
+      "ht1": 2,
+      "ht2": 5,
+      "haiLong": 3,
+      "cskh1": 5,
+      "tinhnang1": 5,
+      "tocdo1": 5,
+      "huongdan1": 5,
+      "sinhtrac1": 3,
+      "baotri1": 4,
+      "phicn1": 4,
+      "nhandien1": 4,
+      "submittedAt": "2026-04-04T11:16:46.972Z",
+      "id": 1775301406972
     }
   ]
 }
