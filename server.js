@@ -1,118 +1,198 @@
+/**
+ * BIDV SmartBanking Survey System - Express Server
+ * Entry point chính cho ứng dụng
+ * 
+ * Middleware stack: dotenv → helmet → compression → morgan → cors → rate-limit → routes
+ */
+
+// Load biến môi trường từ .env
+require('dotenv').config();
+
 const express = require('express');
-const cors = require('cors');
 const path = require('path');
-const fs = require('fs');
+const helmet = require('helmet');
+const compression = require('compression');
+const morgan = require('morgan');
+const cors = require('cors');
+const rateLimit = require('express-rate-limit');
+
+// Import modules nội bộ
+const storage = require('./src/db/storage');
+const { initializeFirebase, verifyFirebaseToken } = require('./src/middleware/auth');
+const surveyRoutes = require('./src/routes/survey');
+const adminRoutes = require('./src/routes/admin');
 
 const app = express();
-app.use(cors());
-app.use(express.json());
-app.use(express.static('public'));
+const PORT = process.env.PORT || 3000;
+const NODE_ENV = process.env.NODE_ENV || 'development';
 
-const DB_FILE = 'db.json';
-if (!fs.existsSync(DB_FILE)) {
-  fs.writeFileSync(DB_FILE, JSON.stringify({ responses: [] }, null, 2));
-}
+// ─── Khởi tạo ──────────────────────────────────────────────────────────────
 
-function readDB() {
-  const data = fs.readFileSync(DB_FILE, 'utf8');
-  return JSON.parse(data);
-}
+// Khởi tạo storage (migrate dữ liệu cũ nếu có)
+storage.initialize();
 
-function writeDB(data) {
-  fs.writeFileSync(DB_FILE, JSON.stringify(data, null, 2));
-}
+// Khởi tạo Firebase Admin SDK
+initializeFirebase();
 
-app.post('/api/submit', (req, res) => {
-  try {
-    console.log(' Received survey:', req.body.fullName, req.body.dob);
-    const db = readDB();
-    const newResp = req.body;
-    newResp.id = Date.now();
-    newResp.submittedAt = new Date().toISOString();
-    db.responses.push(newResp);
-    writeDB(db);
-    res.json({ success: true });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ success: false, message: err.message });
-  }
+// ─── Security Headers (Helmet) ──────────────────────────────────────────────
+
+app.use(helmet({
+    // Cho phép load CDN scripts (Tailwind, Chart.js, Firebase, etc.)
+    contentSecurityPolicy: {
+        directives: {
+            defaultSrc: ["'self'"],
+            scriptSrc: [
+                "'self'",
+                "'unsafe-inline'",
+                "'unsafe-eval'",
+                "https://cdn.tailwindcss.com",
+                "https://cdn.jsdelivr.net",
+                "https://cdn.sheetjs.com",
+                "https://www.gstatic.com",
+                "https://apis.google.com",
+                "https://*.firebaseapp.com",
+                "https://*.googleapis.com"
+            ],
+            styleSrc: [
+                "'self'",
+                "'unsafe-inline'",
+                "https://fonts.googleapis.com",
+                "https://cdnjs.cloudflare.com"
+            ],
+            fontSrc: [
+                "'self'",
+                "https://fonts.gstatic.com",
+                "https://cdnjs.cloudflare.com"
+            ],
+            imgSrc: ["'self'", "data:", "https://placehold.co", "https://*.googleusercontent.com"],
+            connectSrc: [
+                "'self'",
+                "https://*.googleapis.com",
+                "https://*.firebaseio.com",
+                "https://*.firebaseapp.com",
+                "https://identitytoolkit.googleapis.com",
+                "https://securetoken.googleapis.com"
+            ],
+            frameSrc: [
+                "'self'",
+                "https://*.firebaseapp.com",
+                "https://accounts.google.com",
+                "https://*.googleapis.com"
+            ]
+        }
+    },
+    // Cho phép cross-origin cho Firebase auth popup
+    crossOriginOpenerPolicy: { policy: "same-origin-allow-popups" }
+}));
+
+// ─── Compression ─────────────────────────────────────────────────────────────
+
+app.use(compression());
+
+// ─── Request Logging (Morgan) ────────────────────────────────────────────────
+
+app.use(morgan(NODE_ENV === 'production' ? 'combined' : 'dev'));
+
+// ─── CORS Configuration ─────────────────────────────────────────────────────
+
+const corsOrigins = process.env.CORS_ORIGINS
+    ? process.env.CORS_ORIGINS.split(',').map(o => o.trim())
+    : ['http://localhost:3000'];
+
+app.use(cors({
+    origin: NODE_ENV === 'development' ? true : corsOrigins,
+    credentials: true
+}));
+
+// ─── Body Parsers ────────────────────────────────────────────────────────────
+
+app.use(express.json({ limit: '1mb' }));
+app.use(express.urlencoded({ extended: true }));
+
+// ─── Rate Limiting (chỉ cho API submit để chống spam) ────────────────────────
+
+const submitLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 phút
+    max: parseInt(process.env.RATE_LIMIT_MAX) || 50,
+    message: {
+        success: false,
+        message: 'Quá nhiều yêu cầu. Vui lòng thử lại sau 15 phút.'
+    },
+    standardHeaders: true,
+    legacyHeaders: false
 });
 
-app.get('/api/admin/stats', (req, res) => {
-  try {
-    const db = readDB();
-    const responses = db.responses;
-    const total = responses.length;
+// ─── Static Files ────────────────────────────────────────────────────────────
 
-    const genderCount = { Nam: 0, Nữ: 0 };
-    const ageGroups = {};
-    const durationCount = {};
-    const likertAvg = {
-      tc1:0, tc2:0, tc3:0, dapung1:0, dapung2:0, bm1:0, bm2:0,
-      deDung1:0, deDung2:0, ht1:0, ht2:0, haiLong:0,
-      cskh1:0, tinhnang1:0, tocdo1:0, huongdan1:0,
-      sinhtrac1:0, baotri1:0, phicn1:0, nhandien1:0
-    };
-    const featureFreq = {};
-    const difficultyFreq = {};
-    const dailyAvg = {};
+app.use(express.static(path.join(__dirname, 'public')));
 
-    responses.forEach(r => {
-      if (r.gender) genderCount[r.gender] = (genderCount[r.gender]||0)+1;
-      if (r.age) ageGroups[r.age] = (ageGroups[r.age]||0)+1;
-      if (r.duration) durationCount[r.duration] = (durationCount[r.duration]||0)+1;
-      for (let key in likertAvg) if (r[key]) likertAvg[key] += r[key];
-      (r.features || []).forEach(f => featureFreq[f] = (featureFreq[f]||0)+1);
-      (r.difficulties || []).forEach(d => difficultyFreq[d] = (difficultyFreq[d]||0)+1);
+// ─── Health Check ────────────────────────────────────────────────────────────
 
-      let totalScore = 0, cnt = 0;
-      for (let key in likertAvg) if (r[key]) { totalScore += r[key]; cnt++; }
-      const avgScore = cnt ? totalScore / cnt : 0;
-      const date = r.submittedAt ? r.submittedAt.split('T')[0] : new Date(r.id).toISOString().split('T')[0];
-      if (!dailyAvg[date]) dailyAvg[date] = { sum: 0, count: 0 };
-      dailyAvg[date].sum += avgScore;
-      dailyAvg[date].count += 1;
-    });
-
-    if (total > 0) {
-      for (let key in likertAvg) likertAvg[key] = +(likertAvg[key] / total).toFixed(2);
-    }
-
-    const timeline = Object.keys(dailyAvg).sort().map(date => ({
-      date, avg: +(dailyAvg[date].sum / dailyAvg[date].count).toFixed(2)
-    }));
-
+app.get('/health', (req, res) => {
     res.json({
-      total, genderCount, ageGroups, durationCount, likertAvg,
-      featureFreq, difficultyFreq, timeline,
-      rawResponses: responses.slice(-200).reverse()
+        status: 'ok',
+        uptime: process.uptime(),
+        timestamp: new Date().toISOString(),
+        totalResponses: storage.count()
     });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: err.message });
-  }
 });
 
-// Reset endpoint - so sánh trực tiếp, in log để debug
-app.post('/api/admin/reset', (req, res) => {
-  const { password } = req.body;
-  console.log('Reset password received:', password);
-  if (password !== 'bidv2025') {
-    return res.status(401).json({ success: false, message: 'Sai mật khẩu admin' });
-  }
-  try {
-    writeDB({ responses: [] });
-    res.json({ success: true, message: 'Đã xóa toàn bộ dữ liệu' });
-  } catch (err) {
-    res.status(500).json({ success: false, message: err.message });
-  }
-});
+// ─── API Routes ──────────────────────────────────────────────────────────────
+
+// Survey routes (public - có rate limiting)
+app.use('/api', submitLimiter, surveyRoutes);
+
+// Admin routes (protected - yêu cầu Firebase token)
+app.use('/api/admin', verifyFirebaseToken, adminRoutes);
+
+// ─── Page Routes ─────────────────────────────────────────────────────────────
 
 app.get('/admin', (req, res) => {
-  res.sendFile(path.join(__dirname, 'admin.html'));
+    res.sendFile(path.join(__dirname, 'public', 'admin.html'));
 });
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(` Server running at http://localhost:${PORT}`);
+// ─── 404 Handler ─────────────────────────────────────────────────────────────
+
+app.use((req, res) => {
+    res.status(404).json({ error: 'Không tìm thấy trang' });
 });
+
+// ─── Error Handler ───────────────────────────────────────────────────────────
+
+app.use((err, req, res, next) => {
+    console.error('❌ Server Error:', err.stack);
+    res.status(500).json({
+        success: false,
+        message: NODE_ENV === 'production' ? 'Lỗi hệ thống' : err.message
+    });
+});
+
+// ─── Start Server ────────────────────────────────────────────────────────────
+
+const server = app.listen(PORT, () => {
+    console.log(`\n🚀 BIDV Survey Server đang chạy!`);
+    console.log(`📍 Trang khảo sát: http://localhost:${PORT}`);
+    console.log(`📍 Trang admin:    http://localhost:${PORT}/admin`);
+    console.log(`📍 Health check:   http://localhost:${PORT}/health`);
+    console.log(`🔧 Môi trường:     ${NODE_ENV}`);
+    console.log(`📊 Tổng phản hồi:  ${storage.count()}\n`);
+});
+
+// ─── Graceful Shutdown ───────────────────────────────────────────────────────
+
+function gracefulShutdown(signal) {
+    console.log(`\n📴 Nhận tín hiệu ${signal} - Đang tắt server...`);
+    server.close(() => {
+        console.log('✅ Server đã tắt an toàn');
+        process.exit(0);
+    });
+
+    // Force shutdown sau 10 giây nếu không tắt được
+    setTimeout(() => {
+        console.error('⚠️ Buộc tắt server sau 10 giây');
+        process.exit(1);
+    }, 10000);
+}
+
+process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
+process.on('SIGINT', () => gracefulShutdown('SIGINT'));
